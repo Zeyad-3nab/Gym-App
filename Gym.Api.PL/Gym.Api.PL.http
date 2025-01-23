@@ -1,0 +1,6 @@
+@Gym.Api.PL_HostAddress = http://localhost:5105
+
+GET {{Gym.Api.PL_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
