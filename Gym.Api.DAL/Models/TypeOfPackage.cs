@@ -8,7 +8,7 @@ namespace Gym.Api.DAL.Models
 {
     public enum TypeOfPackage
     {
-        VIP,
-        Normal
+        VIP = 1,
+        Normal = 2
     }
 }

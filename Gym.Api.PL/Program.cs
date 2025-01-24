@@ -1,5 +1,8 @@
+using Gym.Api.BLL.Interfaces;
+using Gym.Api.BLL.Repositories;
 using Gym.Api.DAL.Data.Contexts;
 using Gym.Api.DAL.Models;
+using Gym.Api.PL.Mapping;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -24,6 +27,9 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>(Options => {
 .AddEntityFrameworkStores<ApplicationDbContext>()
 .AddDefaultTokenProviders();         //Allow DI to Store
 
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+
+builder.Services.AddAutoMapper(typeof(FoodSystemProfile));
 
 
 builder.Services.AddEndpointsApiExplorer();

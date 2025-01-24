@@ -6,13 +6,12 @@ using System.Threading.Tasks;
 
 namespace Gym.Api.DAL.Models
 {
-    public class Package
+    public class Package:BaseModel<int>
     {
-        public int Id { get; set; }
         public string Name { get; set; }
         public double Price { get; set; }
         public int Duration { get; set; }
-        public bool IsActive { get; set; }
+        public bool IsActive { get; set; } = true;
         public TypeOfPackage Type { get; set; }
     }
 }

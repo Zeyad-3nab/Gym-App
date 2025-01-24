@@ -6,10 +6,8 @@ using System.Threading.Tasks;
 
 namespace Gym.Api.DAL.Models
 {
-    public class ExerciseSystem:BaseModel<int>
+    public class BaseModel<T>
     {
-        public string Name { get; set; }
-        public string TargetMuscle { get; set; }
-
+        public T Id { get; set; }
     }
 }

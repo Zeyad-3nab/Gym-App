@@ -14,6 +14,9 @@ namespace Gym.Api.DAL.Data.Configurations
         public void Configure(EntityTypeBuilder<FoodSystem> builder)
         {
             builder.Property(F => F.Id).UseIdentityColumn(1, 1);
+            builder.Property(F => F.Name).IsRequired();
+            builder.Property(F => F.NumberOfProteins).IsRequired();
+            builder.Property(F => F.NumberOfCalories).IsRequired();
         }
     }
 }

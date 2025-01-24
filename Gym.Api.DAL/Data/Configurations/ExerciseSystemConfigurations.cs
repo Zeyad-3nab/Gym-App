@@ -14,6 +14,8 @@ namespace Gym.Api.DAL.Data.Configurations
         public void Configure(EntityTypeBuilder<ExerciseSystem> builder)
         {
             builder.Property(E => E.Id).UseIdentityColumn(1, 1);
+            builder.Property(E => E.Name).IsRequired();
+            builder.Property(E => E.TargetMuscle).IsRequired();
 
         }
     }

@@ -6,9 +6,8 @@ using System.Threading.Tasks;
 
 namespace Gym.Api.DAL.Models
 {
-    public class FoodSystem
+    public class FoodSystem:BaseModel<int>
     {
-        public int Id { get; set; }
         public string Name { get; set; }
         public double NumberOfCalories { get; set; }
         public double NumberOfProteins { get; set; }
