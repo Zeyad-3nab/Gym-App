@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Gym.Api.BLL.Interfaces
 {
-    public interface IExerciseSystemRepository:IGenaricRepository<ExerciseSystem , int>
+    public interface IFoodRepository:IGenaricRepository<Food , int>
     {
 
     }

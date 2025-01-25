@@ -4,6 +4,7 @@ using Gym.Api.DAL.Data.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Gym.Api.DAL.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250124221452_AddFoodAndExercise")]
+    partial class AddFoodAndExercise
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -165,14 +168,20 @@ namespace Gym.Api.DAL.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("TargetMuscle")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("TargetMuscleId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("TargetMuscleId1")
+                        .HasColumnType("int");
 
                     b.Property<string>("VideoLink")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("TargetMuscleId");
+
+                    b.HasIndex("TargetMuscleId1");
 
                     b.ToTable("Exercise");
                 });
@@ -222,16 +231,32 @@ namespace Gym.Api.DAL.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("PackageType")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<double>("Price")
                         .HasColumnType("float");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
                     b.ToTable("Packages");
+                });
+
+            modelBuilder.Entity("Gym.Api.DAL.Models.TargetMuscle", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("targetMuscles");
                 });
 
             modelBuilder.Entity("Gym.Api.DAL.Models.TrainerData", b =>
@@ -501,6 +526,21 @@ namespace Gym.Api.DAL.Data.Migrations
                     b.Navigation("food");
                 });
 
+            modelBuilder.Entity("Gym.Api.DAL.Models.Exercise", b =>
+                {
+                    b.HasOne("Gym.Api.DAL.Models.TargetMuscle", "TargetMuscle")
+                        .WithMany()
+                        .HasForeignKey("TargetMuscleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Gym.Api.DAL.Models.TargetMuscle", null)
+                        .WithMany("exercises")
+                        .HasForeignKey("TargetMuscleId1");
+
+                    b.Navigation("TargetMuscle");
+                });
+
             modelBuilder.Entity("Gym.Api.DAL.Models.TrainerData", b =>
                 {
                     b.HasOne("Gym.Api.DAL.Models.Package", "Package")
@@ -561,6 +601,11 @@ namespace Gym.Api.DAL.Data.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("Gym.Api.DAL.Models.TargetMuscle", b =>
+                {
+                    b.Navigation("exercises");
                 });
 #pragma warning restore 612, 618
         }

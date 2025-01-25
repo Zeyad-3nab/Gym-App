@@ -14,14 +14,15 @@ namespace Gym.Api.DAL.Models
         public double Weight { get; set; }
         public double Age { get; set; }
 
+        public DateTime StartPackage { get; set; }
+        public DateTime EndPackage { get; set; }
+
         public int PackageId { get; set; }
         public Package Package { get; set; }
 
-        public int FoodSystemId { get; set; }
-        public FoodSystem FoodSystem { get; set; }
+        public List<Food> foods { get; set; }
+        public List<Exercise> exercises { get; set; }
 
-        public int ExerciseSystemId { get; set; }
-        public ExerciseSystem  ExerciseSystem { get; set; }
 
 
     }

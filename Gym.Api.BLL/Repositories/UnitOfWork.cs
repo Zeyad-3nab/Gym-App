@@ -11,27 +11,26 @@ namespace Gym.Api.BLL.Repositories
     public class UnitOfWork:IUnitOfWork
     {
         private readonly ApplicationDbContext context;
-        private IFoodSystemRepository _foodSystemRepository;
-        private IExerciseSystemRepository _exerciseSystemRepository;
         private ITrainerDataRepository _trainerDataRepository;
         private IPackageRepository _packageRepository;
+        private IExerciseRepository _exerciseRepository;
+        private IFoodRepository _foodRepository;
 
 
         public UnitOfWork(ApplicationDbContext context)
         {
             this.context = context;
-            _foodSystemRepository=new FoodSystemRepository(context);
-            _exerciseSystemRepository=new ExerciseSystemRepository(context);
             _trainerDataRepository=new TrainerDataRepository(context);
             _packageRepository=new PackageRepository(context);
+            _foodRepository=new FoodRepository(context);
+            _exerciseRepository=new ExerciseRepository(context);
         }
 
-        public IFoodSystemRepository foodSystemRepository => _foodSystemRepository;
-
-        public IExerciseSystemRepository exerciseSystemRepository => _exerciseSystemRepository;
 
         public IPackageRepository packageRepository => _packageRepository;
 
         public ITrainerDataRepository trainerDataRepository => _trainerDataRepository;
+        public IFoodRepository foodRepository => _foodRepository;
+        public IExerciseRepository exerciseRepository => _exerciseRepository;
     }
 }

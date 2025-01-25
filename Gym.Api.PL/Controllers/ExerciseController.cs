@@ -9,13 +9,13 @@ using System.Net;
 
 namespace Gym.Api.PL.Controllers
 {
-    public class TrainerDataController : BaseController
+    public class ExerciseController : BaseController
     {
         private readonly IUnitOfWork unitOfWork;
         private readonly IMapper _mapper;
         private readonly ApiResponse response;
 
-        public TrainerDataController(IUnitOfWork unitOfWork, IMapper mapper)
+        public ExerciseController(IUnitOfWork unitOfWork, IMapper mapper)
         {
             this.unitOfWork = unitOfWork;
             _mapper = mapper;
@@ -23,48 +23,55 @@ namespace Gym.Api.PL.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<TrainerDataDTO>>> GetAll()
+        public async Task<ActionResult<IEnumerable<ExerciseDTO>>> GetAll()
         {
-            var trainerDatas = await unitOfWork.trainerDataRepository.GetAllAsync();
-            var map = _mapper.Map<IEnumerable<TrainerDataDTO>>(trainerDatas);
+            var exercises = await unitOfWork.exerciseRepository.GetAllAsync();
+            var map = _mapper.Map<IEnumerable<ExerciseDTO>>(exercises);
             return Ok(map);
         }
 
         [HttpGet("{Name:alpha}")]
-        public async Task<ActionResult<IEnumerable<TrainerDataDTO>>> Search(string Name)
+        public async Task<ActionResult<IEnumerable<ExerciseDTO>>> SearchByName(string Name)
         {
-            var trainerDatas = await unitOfWork.trainerDataRepository.SearchByName(Name);
-            var map = _mapper.Map<IEnumerable<TrainerDataDTO>>(trainerDatas);
+            var exercises = await unitOfWork.exerciseRepository.SearchByName(Name);
+            var map = _mapper.Map<IEnumerable<ExerciseDTO>>(exercises);
+            return Ok(map);
+        }
+
+        [HttpGet("{targetMuscle:alpha}")]
+        public async Task<ActionResult<IEnumerable<ExerciseDTO>>> SearchByTargetMuscle(string targetMuscle)
+        {
+            var exercises = await unitOfWork.exerciseRepository.SearchByTargetMuscle(targetMuscle);
+            var map = _mapper.Map<IEnumerable<ExerciseDTO>>(exercises);
             return Ok(map);
         }
 
         [HttpGet("{Id:int}")]
-        public async Task<ActionResult<TrainerDataDTO>> GetByIdAsync(int Id)
+        public async Task<ActionResult<ExerciseDTO>> GetByIdAsync(int Id)
         {
-            var result = await unitOfWork.trainerDataRepository.GetByIdAsync(Id);
+            var result = await unitOfWork.exerciseRepository.GetByIdAsync(Id);
             if (result is not null)
             {
-                var map = _mapper.Map<TrainerDataDTO>(result);
+                var map = _mapper.Map<ExerciseDTO>(result);
                 return Ok(map);
             }
             response.statusCode = HttpStatusCode.NotFound;
-            response.errors.Add("TrainerData with this Id Not Found.");
+            response.errors.Add("Exercise with this Id Not Found.");
             response.message = "a bad Request , You have made";
             return NotFound(response);
         }
 
 
         [HttpPost]
-        public async Task<ActionResult> Add([FromBody] TrainerDataDTO trainerDataDTO)
+        public async Task<ActionResult> Add([FromBody] ExerciseDTO exerciseDTO)
         {
             if (ModelState.IsValid)
             {
-                var map = _mapper.Map<TrainerData>(trainerDataDTO);
+                var map = _mapper.Map<Exercise>(exerciseDTO);
 
-                await unitOfWork.trainerDataRepository.AddAsync(map);
+                await unitOfWork.exerciseRepository.AddAsync(map);
                 return Ok(map);
             }
-
             response.statusCode = HttpStatusCode.BadRequest;
             response.errors = ModelState.Values
                 .SelectMany(v => v.Errors)
@@ -74,15 +81,14 @@ namespace Gym.Api.PL.Controllers
         }
 
         [HttpPut]
-        public async Task<ActionResult> Update([FromBody] TrainerDataDTO trainerDataDTO)
+        public async Task<ActionResult> Update([FromBody] ExerciseDTO exerciseDTO)
         {
             if (ModelState.IsValid)
             {
-                var map = _mapper.Map<TrainerData>(trainerDataDTO);
-                unitOfWork.trainerDataRepository.Update(map);
+                var map = _mapper.Map<Exercise>(exerciseDTO);
+                unitOfWork.exerciseRepository.Update(map);
                 return Ok(map);
             }
-
             response.statusCode = HttpStatusCode.BadRequest;
             response.errors = ModelState.Values
                 .SelectMany(v => v.Errors)
@@ -94,10 +100,10 @@ namespace Gym.Api.PL.Controllers
         [HttpDelete]
         public async Task<ActionResult> Delete(int Id)
         {
-            var TrainerData = await unitOfWork.trainerDataRepository.GetByIdAsync(Id);
-            if (TrainerData is not null)
+            var exercise = await unitOfWork.exerciseRepository.GetByIdAsync(Id);
+            if (exercise is not null)
             {
-                unitOfWork.trainerDataRepository.Delete(TrainerData);
+                unitOfWork.exerciseRepository.Delete(exercise);
                 return Ok(Id);
             }
             response.statusCode = HttpStatusCode.BadRequest;

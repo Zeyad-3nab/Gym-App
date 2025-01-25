@@ -12,6 +12,6 @@ namespace Gym.Api.DAL.Models
         public double Price { get; set; }
         public int Duration { get; set; }
         public bool IsActive { get; set; } = true;
-        public TypeOfPackage Type { get; set; }
+        public string PackageType { get; set; }
     }
 }

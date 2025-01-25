@@ -2,8 +2,10 @@
 using Gym.Api.BLL.Interfaces;
 using Gym.Api.DAL.Models;
 using Gym.Api.PL.DTOs;
+using Gym.Api.PL.Errors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Net;
 
 namespace Gym.Api.PL.Controllers
 {
@@ -11,11 +13,13 @@ namespace Gym.Api.PL.Controllers
     {
         private readonly IUnitOfWork unitOfWork;
         private readonly IMapper _mapper;
+        private readonly ApiResponse response;
 
         public PackageController(IUnitOfWork unitOfWork, IMapper mapper)
         {
             this.unitOfWork = unitOfWork;
             _mapper = mapper;
+            response = new ApiResponse();
         }
 
         [HttpGet]
@@ -35,7 +39,10 @@ namespace Gym.Api.PL.Controllers
                 var map = _mapper.Map<PackageDTO>(result);
                 return Ok(map);
             }
-            return NotFound();
+            response.statusCode = HttpStatusCode.NotFound;
+            response.errors.Add("Package with this Id Not Found.");
+            response.message = "a bad Request , You have made";
+            return NotFound(response);
         }
 
 
@@ -49,7 +56,7 @@ namespace Gym.Api.PL.Controllers
 
 
         [HttpPost]
-        public async Task<ActionResult> Add([FromBody] PackageDTO packageDTO)
+        public async Task<ActionResult> Add([FromBody]PackageDTO packageDTO)
         {
             if (ModelState.IsValid)
             {
@@ -58,7 +65,13 @@ namespace Gym.Api.PL.Controllers
                 await unitOfWork.packageRepository.AddAsync(map);
                 return Ok(map);
             }
-            return BadRequest(ModelState);
+
+            response.statusCode = HttpStatusCode.BadRequest;
+            response.errors = ModelState.Values
+                .SelectMany(v => v.Errors)
+                .Select(e => e.ErrorMessage)
+                .ToList();
+            return BadRequest(response);
         }
 
         [HttpPut]
@@ -70,7 +83,13 @@ namespace Gym.Api.PL.Controllers
                 unitOfWork.packageRepository.Update(map);
                 return Ok(map);
             }
-            return BadRequest(ModelState);
+
+            response.statusCode = HttpStatusCode.BadRequest;
+            response.errors = ModelState.Values
+                .SelectMany(v => v.Errors)
+                .Select(e => e.ErrorMessage)
+                .ToList();
+            return BadRequest(response);
         }
 
         [HttpDelete("{Id}")]
@@ -82,7 +101,11 @@ namespace Gym.Api.PL.Controllers
                 unitOfWork.packageRepository.Delete(Package);
                 return Ok(Id);
             }
-            return BadRequest(ModelState);
+
+            response.statusCode = HttpStatusCode.NotFound;
+            response.errors.Add("Package with this Id Not Found.");
+            response.message = "a bad Request , You have made";
+            return NotFound(response);
         }
     }
 }

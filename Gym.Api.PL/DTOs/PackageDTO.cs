@@ -22,6 +22,6 @@ namespace Gym.Api.PL.DTOs
         public bool IsActive { get; set; }
 
         [Required(ErrorMessage = "Type is required")]
-        public TypeOfPackage Type { get; set; }
+        public string PackageType { get; set; }
     }
 }

@@ -7,7 +7,8 @@ using System.Threading.Tasks;
 
 namespace Gym.Api.BLL.Interfaces
 {
-    public interface IFoodSystemRepository:IGenaricRepository<FoodSystem , int>
+    public interface IExerciseRepository:IGenaricRepository<Exercise  ,int>
     {
+        public Task<IEnumerable<Exercise>> SearchByTargetMuscle(string TargetMuscle);
     }
 }

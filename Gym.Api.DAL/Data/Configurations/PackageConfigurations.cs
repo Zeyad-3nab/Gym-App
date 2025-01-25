@@ -16,7 +16,7 @@ namespace Gym.Api.DAL.Data.Configurations
             builder.Property(P => P.Id).UseIdentityColumn(1, 1);
             builder.Property(P => P.Price).IsRequired();
             builder.Property(P => P.Name).IsRequired();
-            builder.Property(P => P.Type).IsRequired();
+            builder.Property(P => P.PackageType).IsRequired();
             builder.Property(P => P.Duration).IsRequired();
             builder.Property(P => P.IsActive).IsRequired();
         }

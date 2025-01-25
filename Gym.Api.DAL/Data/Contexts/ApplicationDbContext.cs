@@ -1,12 +1,7 @@
 ﻿using Gym.Api.DAL.Models;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Gym.Api.DAL.Data.Contexts
 {
@@ -24,12 +19,28 @@ namespace Gym.Api.DAL.Data.Contexts
             modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
 
             base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<ApplicationUserFood>().HasKey(table => new
+            {
+                table.foodId,
+                table.applicationUserId
+            });
+
+            modelBuilder.Entity<ApplicationUserExercise>().HasKey(table => new
+            {
+                table.exerciseId,
+                table.applicationUserId
+            });
+
         }
 
 
-        public DbSet<ExerciseSystem> ExerciseSystems { get; set; }
-        public DbSet<FoodSystem> FoodSystems { get; set; }
         public DbSet<Package> Packages { get; set; }
         public DbSet<TrainerData> TrainersData { get; set; }
+        public DbSet<Food> Food { get; set; }
+        public DbSet<Exercise> Exercise { get; set; }
+
+        public DbSet<ApplicationUserFood> applicationUserFoods { set; get; }
+        public DbSet<ApplicationUserExercise> applicationUserExercises { set; get; }
     }
 }
