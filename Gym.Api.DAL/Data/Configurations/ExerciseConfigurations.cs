@@ -8,9 +8,9 @@ namespace Gym.Api.DAL.Data.Configurations
     {
         public void Configure(EntityTypeBuilder<Exercise> builder)
         {
-            builder.HasMany(e => e.applicationUsers)
-                .WithMany()
-                .UsingEntity<ApplicationUserExercise>();
+            //builder.HasMany(e => e.applicationUsers)
+            //    .WithMany()
+            //    .UsingEntity<ApplicationUserExercise>();
 
             builder.Property(P => P.Id).UseIdentityColumn(1, 1);
             builder.Property(E => E.Name).IsRequired();

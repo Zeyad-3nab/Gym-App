@@ -13,6 +13,6 @@ namespace Gym.Api.DAL.Models
         public double NumOfProtein { get; set; }
         public string ImageURL { get; set; }
 
-        public List<ApplicationUser> applicationUsers { get; set; }
+        //public List<ApplicationUser>? applicationUsers { get; set; }
     }
 }

@@ -13,9 +13,10 @@ namespace Gym.Api.DAL.Data.Configurations
     {
         public void Configure(EntityTypeBuilder<Food> builder)
         {
-            builder.HasMany(e => e.applicationUsers)
-            .WithMany()
-            .UsingEntity<ApplicationUserFood>();
+            //builder.HasMany(e => e.applicationUsers)
+            //.WithMany()
+            //.UsingEntity<ApplicationUserFood>();
+
             builder.Property(P => P.Id).UseIdentityColumn(1, 1);
             builder.Property(F => F.Name).IsRequired();
             builder.Property(F => F.ImageURL).IsRequired();

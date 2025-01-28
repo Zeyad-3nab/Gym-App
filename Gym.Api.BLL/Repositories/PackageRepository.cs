@@ -30,22 +30,22 @@ namespace Gym.Api.BLL.Repositories
             return await context.Packages.FindAsync(Id);
         }
 
-        public async Task AddAsync(Package entity)
+        public async Task<int> AddAsync(Package entity)
         {
             await context.Packages.AddAsync(entity);
-            context.SaveChanges();
+            return await context.SaveChangesAsync();
         }
 
-        public void Delete(Package entity)
+        public async Task<int> Delete(Package entity)
         {
             context.Packages.Remove(entity);
-            context.SaveChanges();
+            return await context.SaveChangesAsync();
         }
 
-        public void Update(Package entity)
+        public async Task<int> Update(Package entity)
         {
             context.Packages.Update(entity);
-            context.SaveChanges();
+            return await context.SaveChangesAsync();
         }
 
         public async Task<IEnumerable<Package>> SearchByName(string Name)

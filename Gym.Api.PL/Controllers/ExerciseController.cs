@@ -11,21 +11,19 @@ namespace Gym.Api.PL.Controllers
 {
     public class ExerciseController : BaseController
     {
-        private readonly IUnitOfWork unitOfWork;
+        private readonly IUnitOfWork _UnitOfWork;
         private readonly IMapper _mapper;
-        private readonly ApiResponse response;
 
         public ExerciseController(IUnitOfWork unitOfWork, IMapper mapper)
         {
-            this.unitOfWork = unitOfWork;
+            _UnitOfWork = unitOfWork;
             _mapper = mapper;
-            response = new ApiResponse();
         }
 
         [HttpGet]
         public async Task<ActionResult<IEnumerable<ExerciseDTO>>> GetAll()
         {
-            var exercises = await unitOfWork.exerciseRepository.GetAllAsync();
+            var exercises = await _UnitOfWork.exerciseRepository.GetAllAsync();
             var map = _mapper.Map<IEnumerable<ExerciseDTO>>(exercises);
             return Ok(map);
         }
@@ -33,7 +31,7 @@ namespace Gym.Api.PL.Controllers
         [HttpGet("{Name:alpha}")]
         public async Task<ActionResult<IEnumerable<ExerciseDTO>>> SearchByName(string Name)
         {
-            var exercises = await unitOfWork.exerciseRepository.SearchByName(Name);
+            var exercises = await _UnitOfWork.exerciseRepository.SearchByName(Name);
             var map = _mapper.Map<IEnumerable<ExerciseDTO>>(exercises);
             return Ok(map);
         }
@@ -41,7 +39,7 @@ namespace Gym.Api.PL.Controllers
         [HttpGet("{targetMuscle:alpha}")]
         public async Task<ActionResult<IEnumerable<ExerciseDTO>>> SearchByTargetMuscle(string targetMuscle)
         {
-            var exercises = await unitOfWork.exerciseRepository.SearchByTargetMuscle(targetMuscle);
+            var exercises = await _UnitOfWork.exerciseRepository.SearchByTargetMuscle(targetMuscle);
             var map = _mapper.Map<IEnumerable<ExerciseDTO>>(exercises);
             return Ok(map);
         }
@@ -49,16 +47,13 @@ namespace Gym.Api.PL.Controllers
         [HttpGet("{Id:int}")]
         public async Task<ActionResult<ExerciseDTO>> GetByIdAsync(int Id)
         {
-            var result = await unitOfWork.exerciseRepository.GetByIdAsync(Id);
+            var result = await _UnitOfWork.exerciseRepository.GetByIdAsync(Id);
             if (result is not null)
             {
                 var map = _mapper.Map<ExerciseDTO>(result);
                 return Ok(map);
             }
-            response.statusCode = HttpStatusCode.NotFound;
-            response.errors.Add("Exercise with this Id Not Found.");
-            response.message = "a bad Request , You have made";
-            return NotFound(response);
+            return NotFound(new ApiErrorResponse(StatusCodes.Status404NotFound, "Exercise with this Id is not found"));
         }
 
 
@@ -69,15 +64,19 @@ namespace Gym.Api.PL.Controllers
             {
                 var map = _mapper.Map<Exercise>(exerciseDTO);
 
-                await unitOfWork.exerciseRepository.AddAsync(map);
-                return Ok(map);
+                var count = await _UnitOfWork.exerciseRepository.AddAsync(map);
+                if(count > 0)
+                {
+                    return Ok(exerciseDTO);
+                }
+                return BadRequest(new ApiErrorResponse(StatusCodes.Status400BadRequest, "Error in saveing please try again"));
             }
-            response.statusCode = HttpStatusCode.BadRequest;
-            response.errors = ModelState.Values
-                .SelectMany(v => v.Errors)
-                .Select(e => e.ErrorMessage)
-                .ToList();
-            return BadRequest(response);
+            return BadRequest(new ApiValidationResponse(400
+                       , "a bad Request , You have made"
+                       , ModelState.Values
+                       .SelectMany(v => v.Errors)
+                       .Select(e => e.ErrorMessage)
+                       .ToList()));
         }
 
         [HttpPut]
@@ -86,32 +85,40 @@ namespace Gym.Api.PL.Controllers
             if (ModelState.IsValid)
             {
                 var map = _mapper.Map<Exercise>(exerciseDTO);
-                unitOfWork.exerciseRepository.Update(map);
-                return Ok(map);
+                var count = await _UnitOfWork.exerciseRepository.Update(map);
+                if (count > 0) 
+                {
+                    return Ok(exerciseDTO);
+                }
+                return BadRequest(new ApiErrorResponse(StatusCodes.Status400BadRequest, "Error in saveing please try again"));
             }
-            response.statusCode = HttpStatusCode.BadRequest;
-            response.errors = ModelState.Values
-                .SelectMany(v => v.Errors)
-                .Select(e => e.ErrorMessage)
-                .ToList();
-            return BadRequest(response);
+            return BadRequest(new ApiValidationResponse(400
+                     , "a bad Request , You have made"
+                     , ModelState.Values
+                     .SelectMany(v => v.Errors)
+                     .Select(e => e.ErrorMessage)
+                     .ToList()));
         }
 
         [HttpDelete]
         public async Task<ActionResult> Delete(int Id)
         {
-            var exercise = await unitOfWork.exerciseRepository.GetByIdAsync(Id);
+            var exercise = await _UnitOfWork.exerciseRepository.GetByIdAsync(Id);
             if (exercise is not null)
             {
-                unitOfWork.exerciseRepository.Delete(exercise);
-                return Ok(Id);
+                var count = await _UnitOfWork.exerciseRepository.Delete(exercise);
+                if (count > 0)
+                {
+                    return Ok(Id);
+                }
+                return BadRequest(new ApiErrorResponse(StatusCodes.Status400BadRequest, "Error in saveing please try again"));
             }
-            response.statusCode = HttpStatusCode.BadRequest;
-            response.errors = ModelState.Values
-                .SelectMany(v => v.Errors)
-                .Select(e => e.ErrorMessage)
-                .ToList();
-            return BadRequest(response);
+            return BadRequest(new ApiValidationResponse(400
+                     , "a bad Request , You have made"
+                     , ModelState.Values
+                     .SelectMany(v => v.Errors)
+                     .Select(e => e.ErrorMessage)
+                     .ToList()));
         }
     }
 }

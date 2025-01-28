@@ -30,22 +30,22 @@ namespace Gym.Api.BLL.Repositories
             return await context.TrainersData.FindAsync(Id);
         }
 
-        public async Task AddAsync(TrainerData entity)
+        public async Task<int> AddAsync(TrainerData entity)
         {
             await context.TrainersData.AddAsync(entity);
-            context.SaveChanges();
+            return await context.SaveChangesAsync();
         }
 
-        public void Delete(TrainerData entity)
+        public async Task<int> Delete(TrainerData entity)
         {
             context.TrainersData.Remove(entity);
-            context.SaveChanges();
+            return await context.SaveChangesAsync();
         }
 
-        public void Update(TrainerData entity)
+        public async Task<int> Update(TrainerData entity)
         {
             context.TrainersData.Update(entity);
-            context.SaveChanges();
+            return await context.SaveChangesAsync();
         }
 
         public async Task<IEnumerable<TrainerData>> SearchByName(string Name)

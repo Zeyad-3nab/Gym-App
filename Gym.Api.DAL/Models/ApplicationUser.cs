@@ -20,8 +20,8 @@ namespace Gym.Api.DAL.Models
         public int PackageId { get; set; }
         public Package Package { get; set; }
 
-        public List<Food> foods { get; set; }
-        public List<Exercise> exercises { get; set; }
+        public List<Food>? foods { get; set; }
+        public List<Exercise>? exercises { get; set; }
 
 
 

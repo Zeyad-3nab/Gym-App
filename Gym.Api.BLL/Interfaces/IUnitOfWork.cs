@@ -12,6 +12,8 @@ namespace Gym.Api.BLL.Interfaces
         public ITrainerDataRepository  trainerDataRepository { get; }
         public IExerciseRepository  exerciseRepository { get; }
         public IFoodRepository  foodRepository { get; }
+        public IUserExerciseRepository  userExerciseRepository { get; }
+        public IUserFoodRepository  userFoodRepository { get; }
 
 
     }

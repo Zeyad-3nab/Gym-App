@@ -12,9 +12,9 @@ namespace Gym.Api.BLL.Interfaces
         Task<IEnumerable<T>> GetAllAsync();
         Task<IEnumerable<T>> SearchByName(string Name);
         Task<T> GetByIdAsync(Key Id);
-        Task AddAsync(T entity);
-        void Update(T entity);
-        void Delete(T entity);
+        Task<int> AddAsync(T entity);
+        Task<int> Update(T entity);
+        Task<int> Delete(T entity);
 
     }
 }

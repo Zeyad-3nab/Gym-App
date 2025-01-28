@@ -13,13 +13,11 @@ namespace Gym.Api.PL.Controllers
     {
         private readonly IUnitOfWork unitOfWork;
         private readonly IMapper _mapper;
-        private readonly ApiResponse response;
 
         public PackageController(IUnitOfWork unitOfWork, IMapper mapper)
         {
             this.unitOfWork = unitOfWork;
             _mapper = mapper;
-            response = new ApiResponse();
         }
 
         [HttpGet]
@@ -39,10 +37,7 @@ namespace Gym.Api.PL.Controllers
                 var map = _mapper.Map<PackageDTO>(result);
                 return Ok(map);
             }
-            response.statusCode = HttpStatusCode.NotFound;
-            response.errors.Add("Package with this Id Not Found.");
-            response.message = "a bad Request , You have made";
-            return NotFound(response);
+            return NotFound(new ApiErrorResponse(StatusCodes.Status404NotFound, "Package with this Id is not found"));
         }
 
 
@@ -62,16 +57,15 @@ namespace Gym.Api.PL.Controllers
             {
                 var map = _mapper.Map<Package>(packageDTO);
 
-                await unitOfWork.packageRepository.AddAsync(map);
-                return Ok(map);
+                var count = await unitOfWork.packageRepository.AddAsync(map);
+                if(count > 0) 
+                {
+                    return Ok(packageDTO);
+                }
+                return BadRequest(new ApiErrorResponse(StatusCodes.Status400BadRequest, "Error in save please try again"));
             }
 
-            response.statusCode = HttpStatusCode.BadRequest;
-            response.errors = ModelState.Values
-                .SelectMany(v => v.Errors)
-                .Select(e => e.ErrorMessage)
-                .ToList();
-            return BadRequest(response);
+            return NotFound(new ApiErrorResponse(StatusCodes.Status404NotFound, "Package with this Id is not found"));
         }
 
         [HttpPut]
@@ -80,16 +74,20 @@ namespace Gym.Api.PL.Controllers
             if (ModelState.IsValid)
             {
                 var map = _mapper.Map<Package>(packageDTO);
-                unitOfWork.packageRepository.Update(map);
-                return Ok(map);
+                var count = await unitOfWork.packageRepository.Update(map);
+                if (count > 0) 
+                {
+                    return Ok(packageDTO);
+                }
+                return BadRequest(new ApiErrorResponse(StatusCodes.Status400BadRequest, "Error in save please try again"));
             }
 
-            response.statusCode = HttpStatusCode.BadRequest;
-            response.errors = ModelState.Values
-                .SelectMany(v => v.Errors)
-                .Select(e => e.ErrorMessage)
-                .ToList();
-            return BadRequest(response);
+            return BadRequest(new ApiValidationResponse(400
+         , "a bad Request , You have made"
+         , ModelState.Values
+         .SelectMany(v => v.Errors)
+         .Select(e => e.ErrorMessage)
+         .ToList()));
         }
 
         [HttpDelete("{Id}")]
@@ -98,14 +96,15 @@ namespace Gym.Api.PL.Controllers
             var Package = await unitOfWork.packageRepository.GetByIdAsync(Id);
             if (Package is not null)
             {
-                unitOfWork.packageRepository.Delete(Package);
-                return Ok(Id);
+                var count = await unitOfWork.packageRepository.Delete(Package);
+                if (count > 0) 
+                {
+                    return Ok();
+                }
+                return BadRequest(new ApiErrorResponse(StatusCodes.Status400BadRequest, "Error in Delete please try again"));
             }
 
-            response.statusCode = HttpStatusCode.NotFound;
-            response.errors.Add("Package with this Id Not Found.");
-            response.message = "a bad Request , You have made";
-            return NotFound(response);
+            return NotFound(new ApiErrorResponse(StatusCodes.Status404NotFound, "Package with this Id is not found"));
         }
     }
 }

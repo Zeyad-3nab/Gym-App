@@ -30,22 +30,22 @@ namespace Gym.Api.BLL.Repositories
             return await context.Exercise.FindAsync(Id);
         }
 
-        public async Task AddAsync(Exercise entity)
+        public async Task<int> AddAsync(Exercise entity)
         {
             await context.Exercise.AddAsync(entity);
-            context.SaveChanges();
+             return await context.SaveChangesAsync();
         }
 
-        public void Delete(Exercise entity)
+        public async Task<int> Delete(Exercise entity)
         {
             context.Exercise.Remove(entity);
-            context.SaveChanges();
+            return await context.SaveChangesAsync();
         }
 
-        public void Update(Exercise entity)
+        public async Task<int> Update(Exercise entity)
         {
             context.Exercise.Update(entity);
-            context.SaveChanges();
+            return await context.SaveChangesAsync();
         }
 
         public async Task<IEnumerable<Exercise>> SearchByName(string Name)
@@ -57,7 +57,5 @@ namespace Gym.Api.BLL.Repositories
         {
             return await context.Exercise.Where(E => E.TargetMuscle.Contains(TargetMuscle)).ToListAsync();
         }
-
-
     }
 }

@@ -6,6 +6,7 @@ using Gym.Api.PL.DTOs;
 using Gym.Api.PL.Errors;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
@@ -22,7 +23,6 @@ namespace Gym.Api.PL.Controllers
         private readonly IConfiguration _configuration;
         private readonly IMapper _mapper;
         private readonly IUnitOfWork _unitOfWork;
-        private readonly ApiResponse response;
 
         public AccountController(
             UserManager<ApplicationUser> userManager,
@@ -34,7 +34,6 @@ namespace Gym.Api.PL.Controllers
             _configuration = configuration;
             _mapper = mapper;
             _unitOfWork = unitOfWork;
-            response = new ApiResponse();
         }
 
 
@@ -71,18 +70,15 @@ namespace Gym.Api.PL.Controllers
                     return Ok(user);
                 }
 
-                response.statusCode = HttpStatusCode.NotFound;
-                response.errors.Add("User with this Id Not Found.");
-                response.message = "a bad Request , You have made";
-                return NotFound(response);
+                return NotFound(new ApiErrorResponse(StatusCodes.Status404NotFound, "User with this Id is not found"));
             }
 
-            response.statusCode = HttpStatusCode.BadRequest;
-            response.errors = ModelState.Values
-                .SelectMany(v => v.Errors)
-                .Select(e => e.ErrorMessage)
-                .ToList();
-            return BadRequest(response);
+            return BadRequest(new ApiValidationResponse(400
+                     , "a bad Request , You have made"
+                     , ModelState.Values
+                     .SelectMany(v => v.Errors)
+                     .Select(e => e.ErrorMessage)
+                     .ToList()));
         }
 
 
@@ -95,10 +91,7 @@ namespace Gym.Api.PL.Controllers
                 var user = await _userManager.FindByEmailAsync(registerDTO.Email);
                 if (user is not null)
                 {
-                    response.statusCode = HttpStatusCode.BadRequest;
-                    response.errors.Add("User with this email already exists.");
-                    response.message = "a bad Request , You have made";
-                    return BadRequest(response);
+                    return NotFound(new ApiErrorResponse(StatusCodes.Status404NotFound, "User with this Email is not found"));
                 }
                 var CheckPackage=await _unitOfWork.packageRepository.GetByIdAsync(registerDTO.PackageId);
                 if(CheckPackage is not null) 
@@ -112,35 +105,20 @@ namespace Gym.Api.PL.Controllers
                         return Ok();
                     }
 
-                    else
-                    {
-                        response.statusCode = HttpStatusCode.BadRequest;
-                        response.errors = new List<string>();
+                    return BadRequest(new ApiValidationResponse(StatusCodes.Status400BadRequest
+                               , "a bad Request , You have made"
+                               , result.Errors.Select(e => e.Description).ToList()));
+                }
+                return NotFound(new ApiErrorResponse(StatusCodes.Status404NotFound, "Package with this Id is not found"));
 
-                        foreach (var err in result.Errors)
-                        {
-                            response.errors.Add(err.Description);
-                        }
-                        response.message = "a bad Request , You have made";
-                        return BadRequest(response);
-                    }
-                }
-                else 
-                {
-                    response.statusCode = HttpStatusCode.BadRequest;
-                    response.errors.Add("Package with this Id NotFound");
-                    response.message = "a bad Request , You have made";
-                    return BadRequest(response);
-                }
-               
             }
 
-            response.statusCode = HttpStatusCode.BadRequest;
-            response.errors = ModelState.Values
-                .SelectMany(v => v.Errors)
-                .Select(e => e.ErrorMessage)
-                .ToList();
-            return BadRequest(response);
+            return BadRequest(new ApiValidationResponse(400
+                       , "a bad Request , You have made"
+                       , ModelState.Values
+                       .SelectMany(v => v.Errors)
+                       .Select(e => e.ErrorMessage)
+                       .ToList()));
         }
 
 
@@ -192,28 +170,16 @@ namespace Gym.Api.PL.Controllers
 
                         return Ok(_token);
                     }
-                    else
-                    {
-                        response.statusCode = HttpStatusCode.BadRequest;
-                        response.errors.Add("Password with this email InCorrect");
-                        response.message = "a bad Request , You have made";
-                        return BadRequest(response);
-                    }
+                    return NotFound(new ApiErrorResponse(StatusCodes.Status400BadRequest, "Password with this Email inCorrect"));
                 }
-                else
-                {
-                    response.statusCode = HttpStatusCode.NotFound;
-                    response.errors.Add("Email with this Name NotFound.");
-                    response.message = "a bad Request , You have made";
-                    return BadRequest(response);
-                }
+                return NotFound(new ApiErrorResponse(StatusCodes.Status404NotFound, "User with this Email is not found"));
             }
-            response.statusCode = HttpStatusCode.BadRequest;
-            response.errors = ModelState.Values
-                .SelectMany(v => v.Errors)
-                .Select(e => e.ErrorMessage)
-                .ToList();
-            return BadRequest(response);
+            return BadRequest(new ApiValidationResponse(400
+                       , "a bad Request , You have made"
+                       , ModelState.Values
+                       .SelectMany(v => v.Errors)
+                       .Select(e => e.ErrorMessage)
+                       .ToList()));
         }
 
 
@@ -242,35 +208,23 @@ namespace Gym.Api.PL.Controllers
                     {
                         return Ok("Updated");
                     }
-                    else
-                    {
-                        response.statusCode = HttpStatusCode.BadRequest;
-                        response.errors = new List<string>();
-
-                        foreach (var err in result.Errors)
-                        {
-                            response.errors.Add(err.Description);
-                        }
-                        response.message = "a bad Request , You have made";
-                        return BadRequest(response);
-                    }
+                    return BadRequest(new ApiValidationResponse(StatusCodes.Status400BadRequest
+                             , "a bad Request , You have made"
+                             , result.Errors.Select(e => e.Description).ToList()));
 
 
                 }
 
-                response.statusCode = HttpStatusCode.BadRequest;
-                response.errors.Add("User with this Id NotFound.");
-                response.message = "a bad Request , You have made";
-                return BadRequest(response);
+                return NotFound(new ApiErrorResponse(StatusCodes.Status404NotFound, "User with this Id is not found"));
 
 
             }
-            response.statusCode = HttpStatusCode.BadRequest;
-            response.errors = ModelState.Values
-                .SelectMany(v => v.Errors)
-                .Select(e => e.ErrorMessage)
-                .ToList();
-            return BadRequest(response);
+            return BadRequest(new ApiValidationResponse(400
+                      , "a bad Request , You have made"
+                      , ModelState.Values
+                      .SelectMany(v => v.Errors)
+                      .Select(e => e.ErrorMessage)
+                      .ToList()));
 
         }
 
@@ -289,28 +243,19 @@ namespace Gym.Api.PL.Controllers
                     {
                         return Ok();
                     }
-                    response.statusCode = HttpStatusCode.BadRequest;
-                    response.errors = new List<string>();
-
-                    foreach (var err in result.Errors)
-                    {
-                        response.errors.Add(err.Description);
-                    }
-                    response.message = "a bad Request , You have made";
-                    return BadRequest(response);
+                    return BadRequest(new ApiValidationResponse(StatusCodes.Status400BadRequest
+                , "a bad Request , You have made"
+                , result.Errors.Select(e => e.Description).ToList()));
                 }
-                response.statusCode = HttpStatusCode.NotFound;
-                response.errors.Add("User with this Id Not Found");
-                response.message = "a bad Request , You have made";
-                return NotFound(response);
+                return NotFound(new ApiErrorResponse(StatusCodes.Status404NotFound, "User with this Id is not found"));
             }
 
-            response.statusCode = HttpStatusCode.BadRequest;
-            response.errors = ModelState.Values
-                .SelectMany(v => v.Errors)
-                .Select(e => e.ErrorMessage)
-                .ToList();
-            return BadRequest(response);
+            return BadRequest(new ApiValidationResponse(400
+                      , "a bad Request , You have made"
+                      , ModelState.Values
+                      .SelectMany(v => v.Errors)
+                      .Select(e => e.ErrorMessage)
+                      .ToList()));
         }
     }
 }

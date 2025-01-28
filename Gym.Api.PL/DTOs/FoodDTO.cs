@@ -13,9 +13,9 @@ namespace Gym.Api.PL.DTOs
 
         [Required(ErrorMessage = "Number Of Protein is required")]
         public double NumOfProtein { get; set; }
+        public string? ImageURL { get; set; }
 
         [Required(ErrorMessage = "Image is required")]
-
         public IFormFile Image { get; set; }
     }
 }

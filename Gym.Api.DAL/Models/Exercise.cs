@@ -12,7 +12,7 @@ namespace Gym.Api.DAL.Models
         public string VideoLink { get; set; }
         public string Comment { get; set; }
         public string TargetMuscle { get; set; }
-        public List<ApplicationUser> applicationUsers { get; set; }
+        //public List<ApplicationUser>? applicationUsers { get; set; }
 
     }
 }

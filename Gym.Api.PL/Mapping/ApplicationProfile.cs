@@ -15,6 +15,7 @@ namespace Gym.Api.PL.Mapping
             CreateMap<TrainerData, TrainerDataDTO>().ReverseMap();
             CreateMap<ApplicationUser, RegisterDTO>().ReverseMap();
             CreateMap<ApplicationUser, UpdateuserDTO>().ReverseMap();
+            CreateMap<ApplicationUserExercise, UserExerciseDTO>().ReverseMap();
 
         }
     }
