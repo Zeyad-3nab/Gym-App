@@ -3,6 +3,7 @@ using Gym.Api.BLL.Interfaces;
 using Gym.Api.DAL.Models;
 using Gym.Api.PL.DTOs;
 using Gym.Api.PL.Errors;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
@@ -20,6 +21,8 @@ namespace Gym.Api.PL.Controllers
             _mapper = mapper;
         }
 
+
+        [Authorize(Roles = "Admin")]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<TrainerDataDTO>>> GetAll()
         {
@@ -28,6 +31,8 @@ namespace Gym.Api.PL.Controllers
             return Ok(map);
         }
 
+
+        [Authorize(Roles = "Admin")]
         [HttpGet("{Name:alpha}")]
         public async Task<ActionResult<IEnumerable<TrainerDataDTO>>> Search(string Name)
         {
@@ -36,6 +41,8 @@ namespace Gym.Api.PL.Controllers
             return Ok(map);
         }
 
+
+        [Authorize(Roles = "Admin")]
         [HttpGet("{Id:int}")]
         public async Task<ActionResult<TrainerDataDTO>> GetByIdAsync(int Id)
         {
@@ -48,7 +55,7 @@ namespace Gym.Api.PL.Controllers
             return NotFound(new ApiErrorResponse(StatusCodes.Status404NotFound, "Trainer Data with this Id is not found"));
         }
 
-
+        [AllowAnonymous]
         [HttpPost]
         public async Task<ActionResult> Add([FromBody] TrainerDataDTO trainerDataDTO)
         {
@@ -72,6 +79,7 @@ namespace Gym.Api.PL.Controllers
          .ToList()));
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPut]
         public async Task<ActionResult> Update([FromBody] TrainerDataDTO trainerDataDTO)
         {
@@ -93,6 +101,7 @@ namespace Gym.Api.PL.Controllers
          .ToList()));
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpDelete]
         public async Task<ActionResult> Delete(int Id)
         {

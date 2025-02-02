@@ -3,6 +3,7 @@ using Gym.Api.BLL.Interfaces;
 using Gym.Api.DAL.Models;
 using Gym.Api.PL.DTOs;
 using Gym.Api.PL.Errors;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
@@ -20,6 +21,8 @@ namespace Gym.Api.PL.Controllers
             _mapper = mapper;
         }
 
+
+        [AllowAnonymous]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<PackageDTO>>> GetAll()
         {
@@ -28,6 +31,8 @@ namespace Gym.Api.PL.Controllers
             return Ok(map);
         }
 
+
+        [AllowAnonymous]
         [HttpGet("{Id:int}")]
         public async Task<ActionResult<PackageDTO>> GetByIdAsync(int Id)
         {
@@ -40,7 +45,7 @@ namespace Gym.Api.PL.Controllers
             return NotFound(new ApiErrorResponse(StatusCodes.Status404NotFound, "Package with this Id is not found"));
         }
 
-
+        [AllowAnonymous]
         [HttpGet("{Name:alpha}")]
         public async Task<ActionResult<IEnumerable<PackageDTO>>> GetAll(string Name)
         {
@@ -49,7 +54,7 @@ namespace Gym.Api.PL.Controllers
             return Ok(map);
         }
 
-
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task<ActionResult> Add([FromBody]PackageDTO packageDTO)
         {
@@ -68,6 +73,8 @@ namespace Gym.Api.PL.Controllers
             return NotFound(new ApiErrorResponse(StatusCodes.Status404NotFound, "Package with this Id is not found"));
         }
 
+
+        [Authorize(Roles = "Admin")]
         [HttpPut]
         public async Task<ActionResult> Update([FromBody] PackageDTO packageDTO)
         {
@@ -90,6 +97,8 @@ namespace Gym.Api.PL.Controllers
          .ToList()));
         }
 
+
+        [Authorize(Roles = "Admin")]
         [HttpDelete("{Id}")]
         public async Task<ActionResult> Delete(int Id)
         {

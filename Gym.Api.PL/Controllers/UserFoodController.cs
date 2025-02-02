@@ -3,12 +3,14 @@ using Gym.Api.BLL.Interfaces;
 using Gym.Api.DAL.Models;
 using Gym.Api.PL.DTOs;
 using Gym.Api.PL.Errors;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Gym.Api.PL.Controllers
 {
+    [Authorize]
     public class UserFoodController : BaseController
     {
         private readonly IUnitOfWork _UnitOfWork;
@@ -22,6 +24,8 @@ namespace Gym.Api.PL.Controllers
             _Mapper = mapper;
         }
 
+
+        [Authorize(Roles = "Admin")]
         [HttpPost("AddFoodToUser")]
         public async Task<ActionResult> AddExerciseToUser(UserFoodDTO userFoodDTO)
         {
@@ -53,6 +57,7 @@ namespace Gym.Api.PL.Controllers
         }
 
 
+        [Authorize(Roles = "Admin")]
         [HttpDelete("RemoveFoodFromUser")]
         public async Task<ActionResult> RemoveExerciseFromUser(RemoveFoodFromUserDTO removeFood)
         {
@@ -76,8 +81,8 @@ namespace Gym.Api.PL.Controllers
          .ToList()));
         }
 
+        [Authorize]
         [HttpGet("GetFoodsForUser")]
-
         public async Task<ActionResult<IEnumerable<UserFoodDTO>>> GetAllFoodsForUser(string userId)
         {
             var user = await _UserManager.FindByIdAsync(userId);

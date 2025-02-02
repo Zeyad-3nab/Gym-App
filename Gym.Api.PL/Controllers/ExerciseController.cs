@@ -3,12 +3,14 @@ using Gym.Api.BLL.Interfaces;
 using Gym.Api.DAL.Models;
 using Gym.Api.PL.DTOs;
 using Gym.Api.PL.Errors;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
 
 namespace Gym.Api.PL.Controllers
 {
+    [Authorize]
     public class ExerciseController : BaseController
     {
         private readonly IUnitOfWork _UnitOfWork;
@@ -20,6 +22,7 @@ namespace Gym.Api.PL.Controllers
             _mapper = mapper;
         }
 
+        [Authorize]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<ExerciseDTO>>> GetAll()
         {
@@ -28,7 +31,8 @@ namespace Gym.Api.PL.Controllers
             return Ok(map);
         }
 
-        [HttpGet("{Name:alpha}")]
+        [Authorize]
+        [HttpGet("SearchByName")]
         public async Task<ActionResult<IEnumerable<ExerciseDTO>>> SearchByName(string Name)
         {
             var exercises = await _UnitOfWork.exerciseRepository.SearchByName(Name);
@@ -36,7 +40,8 @@ namespace Gym.Api.PL.Controllers
             return Ok(map);
         }
 
-        [HttpGet("{targetMuscle:alpha}")]
+        [Authorize]
+        [HttpGet("SearchByTargetMuscle")]
         public async Task<ActionResult<IEnumerable<ExerciseDTO>>> SearchByTargetMuscle(string targetMuscle)
         {
             var exercises = await _UnitOfWork.exerciseRepository.SearchByTargetMuscle(targetMuscle);
@@ -44,6 +49,8 @@ namespace Gym.Api.PL.Controllers
             return Ok(map);
         }
 
+
+        [Authorize]
         [HttpGet("{Id:int}")]
         public async Task<ActionResult<ExerciseDTO>> GetByIdAsync(int Id)
         {
@@ -56,7 +63,7 @@ namespace Gym.Api.PL.Controllers
             return NotFound(new ApiErrorResponse(StatusCodes.Status404NotFound, "Exercise with this Id is not found"));
         }
 
-
+        [Authorize(Roles ="Admin")]
         [HttpPost]
         public async Task<ActionResult> Add([FromBody] ExerciseDTO exerciseDTO)
         {
@@ -79,6 +86,8 @@ namespace Gym.Api.PL.Controllers
                        .ToList()));
         }
 
+
+        [Authorize(Roles = "Admin")]
         [HttpPut]
         public async Task<ActionResult> Update([FromBody] ExerciseDTO exerciseDTO)
         {
@@ -100,6 +109,7 @@ namespace Gym.Api.PL.Controllers
                      .ToList()));
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpDelete]
         public async Task<ActionResult> Delete(int Id)
         {

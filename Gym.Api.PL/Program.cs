@@ -1,10 +1,12 @@
 using AutoMapper;
 using Gym.Api.BLL.Interfaces;
 using Gym.Api.BLL.Repositories;
+using Gym.Api.BLL.Services;
 using Gym.Api.DAL.Data.Contexts;
 using Gym.Api.DAL.Models;
 using Gym.Api.PL.Extention;
 using Gym.Api.PL.Mapping;
+using Gym.Api.PL.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -48,6 +50,7 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>(Options => {
 .AddDefaultTokenProviders();         //Allow DI to Store
 
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+builder.Services.AddScoped<ITokenService, TokenService>();
 
 builder.Services.AddAutoMapper(M => M.AddProfile(new ApplicationProfile(builder.Configuration)));
 

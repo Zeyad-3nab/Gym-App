@@ -1,9 +1,11 @@
 ﻿using AutoMapper;
 using Azure;
 using Gym.Api.BLL.Interfaces;
+using Gym.Api.BLL.Services;
 using Gym.Api.DAL.Models;
 using Gym.Api.PL.DTOs;
 using Gym.Api.PL.Errors;
+using Gym.Api.PL.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
@@ -23,20 +25,24 @@ namespace Gym.Api.PL.Controllers
         private readonly IConfiguration _configuration;
         private readonly IMapper _mapper;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly ITokenService _TokenService;
 
         public AccountController(
             UserManager<ApplicationUser> userManager,
             IConfiguration configuration,
             IMapper mapper,
-            IUnitOfWork unitOfWork)
+            IUnitOfWork unitOfWork,
+            ITokenService tokenService)
         {
             _userManager = userManager;
             _configuration = configuration;
             _mapper = mapper;
             _unitOfWork = unitOfWork;
+            _TokenService = tokenService;
         }
 
 
+        [Authorize(Roles ="Admin")]
         [HttpGet("GetAllUsers")]
         public ActionResult GetAllUsers()
         {
@@ -58,7 +64,7 @@ namespace Gym.Api.PL.Controllers
             return Ok(users);
         }
 
-        [AllowAnonymous]
+        [Authorize(Roles ="Admin")]
         [HttpGet("GetUserById")]
         public async Task<ActionResult> GetUserById(string userId)
         {
@@ -90,9 +96,9 @@ namespace Gym.Api.PL.Controllers
             {
                 var user = await _userManager.FindByEmailAsync(registerDTO.Email);
                 if (user is not null)
-                {
-                    return NotFound(new ApiErrorResponse(StatusCodes.Status404NotFound, "User with this Email is not found"));
-                }
+                    return NotFound(new ApiErrorResponse(StatusCodes.Status404NotFound, "User with this Email is not found"));     
+
+
                 var CheckPackage=await _unitOfWork.packageRepository.GetByIdAsync(registerDTO.PackageId);
                 if(CheckPackage is not null) 
                 {
@@ -101,8 +107,17 @@ namespace Gym.Api.PL.Controllers
                     var result = await _userManager.CreateAsync(appUser, registerDTO.Password);    //Create Account
                     if (result.Succeeded)
                     {
-                        await _userManager.AddToRoleAsync(appUser, "Trainer"); 
-                        return Ok();
+                        await _userManager.AddToRoleAsync(appUser, "Trainer");
+
+                        var ReturnedUser = new UserDTO()
+                        {
+
+                            Id = appUser.Id,
+                            role = "Trainer",
+                            UserName = appUser.UserName,
+                            Token = await _TokenService.CreateTokenAsync(appUser , _userManager)
+                        };
+                        return Ok(ReturnedUser);
                     }
 
                     return BadRequest(new ApiValidationResponse(StatusCodes.Status400BadRequest
@@ -135,40 +150,14 @@ namespace Gym.Api.PL.Controllers
                 {
                     if (await _userManager.CheckPasswordAsync(user, loginDTO.Password))
                     {
-                        var claims = new List<Claim>();
-
-                        //claims.Add(new Claim("tokenNo", "75"));
-                        claims.Add(new Claim(ClaimTypes.Name, user.UserName));
-                        claims.Add(new Claim(ClaimTypes.NameIdentifier, user.Id));
-                        claims.Add(new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()));
-
-                        var roles = await _userManager.GetRolesAsync(user);
-                        foreach (var item in roles)
+                        var role = await _userManager.GetRolesAsync(user);
+                        return Ok(new UserDTO()
                         {
-                            claims.Add(new Claim(ClaimTypes.Role, item.ToString()));
-                        }
-
-
-                        //SigningCradiential
-
-                        var Key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWT:SecretKey"]));
-                        var SigningCradiential = new SigningCredentials(Key, SecurityAlgorithms.HmacSha256);
-
-
-                        var token = new JwtSecurityToken(
-                            claims: claims,
-                            issuer: _configuration["JWT:Issuer"],
-                            audience: _configuration["JWT:Audience"],
-                            expires: DateTime.Now.AddMonths(1),
-                            signingCredentials: SigningCradiential
-                            );
-                        var _token = new
-                        {
-                            token = new JwtSecurityTokenHandler().WriteToken(token),
-                            expiration = token.ValidTo
-                        };
-
-                        return Ok(_token);
+                            Id = user.Id,
+                            role = role[0],
+                            UserName = user.UserName,
+                            Token = await _TokenService.CreateTokenAsync(user, _userManager)
+                        });
                     }
                     return NotFound(new ApiErrorResponse(StatusCodes.Status400BadRequest, "Password with this Email inCorrect"));
                 }
@@ -182,7 +171,7 @@ namespace Gym.Api.PL.Controllers
                        .ToList()));
         }
 
-
+        [Authorize]
         [HttpPut("UpdateUser")]
         public async Task<ActionResult> UpdateUser([FromBody]UpdateuserDTO registerDTO)
         {

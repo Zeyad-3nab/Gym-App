@@ -5,11 +5,13 @@ using Gym.Api.DAL.Models;
 using Gym.Api.PL.DTOs;
 using Gym.Api.PL.Errors;
 using Gym.Api.PL.Helpers;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Gym.Api.PL.Controllers
 {
+    [Authorize]
     public class FoodController : BaseController
     {
         private readonly IUnitOfWork _UnitOfWork;
@@ -21,6 +23,8 @@ namespace Gym.Api.PL.Controllers
             _mapper = mapper;
         }
 
+
+        [Authorize]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<FoodDTO>>> GetAll()
         {
@@ -29,6 +33,8 @@ namespace Gym.Api.PL.Controllers
             return Ok(map);
         }
 
+
+        [Authorize]
         [HttpGet("{Name:alpha}")]
         public async Task<ActionResult<IEnumerable<FoodDTO>>> SearchByName(string Name)
         {
@@ -38,6 +44,7 @@ namespace Gym.Api.PL.Controllers
         }
 
 
+        [Authorize]
         [HttpGet("{Id:int}")]
         public async Task<ActionResult<FoodDTO>> GetByIdAsync(int Id)
         {
@@ -51,6 +58,7 @@ namespace Gym.Api.PL.Controllers
         }
 
 
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task<ActionResult> Add(FoodDTO foodDTO)
         {
@@ -74,6 +82,8 @@ namespace Gym.Api.PL.Controllers
             return NotFound(new ApiErrorResponse(StatusCodes.Status404NotFound, "fOOD with this Id is not found"));
         }
 
+
+        [Authorize(Roles = "Admin")]
         [HttpPut]
         public async Task<ActionResult> Update(FoodDTO foodDTO)
         {
@@ -103,6 +113,8 @@ namespace Gym.Api.PL.Controllers
                      .ToList()));
         }
 
+
+        [Authorize(Roles = "Admin")]
         [HttpDelete]
         public async Task<ActionResult> Delete(int Id)
         {

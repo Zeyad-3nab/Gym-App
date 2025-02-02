@@ -3,6 +3,7 @@ using Gym.Api.BLL.Interfaces;
 using Gym.Api.DAL.Models;
 using Gym.Api.PL.DTOs;
 using Gym.Api.PL.Errors;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
@@ -10,6 +11,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Gym.Api.PL.Controllers
 {
+    [Authorize]
     public class UserExerciseController : BaseController
     {
         private readonly IUnitOfWork _UnitOfWork;
@@ -23,6 +25,8 @@ namespace Gym.Api.PL.Controllers
             _Mapper = mapper;
         }
 
+
+        [Authorize(Roles = "Admin")]
         [HttpPost("AddExerciseToUser")]
         public async Task<ActionResult> AddExerciseToUser(UserExerciseDTO userExerciseDTO) 
         {
@@ -53,6 +57,8 @@ namespace Gym.Api.PL.Controllers
 
         }
 
+
+        [Authorize(Roles = "Admin")]
         [HttpDelete("RemoveExerciseFromUser")]
         public async Task<ActionResult> RemoveExerciseFromUser(RemoveExerciseFromUserDTO removeExercise) 
         {
@@ -76,6 +82,8 @@ namespace Gym.Api.PL.Controllers
          .ToList()));
         }
 
+
+        [Authorize]
         [HttpGet("GetExerciseForUser")]
 
         public async Task<ActionResult<IEnumerable<UserExerciseDTO>>> GetAllExerciseForUser(string userId) 
