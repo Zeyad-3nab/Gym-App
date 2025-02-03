@@ -17,7 +17,6 @@ namespace Gym.Api.PL.DTOs
         public string Password { get; set; }
 
         [Required(ErrorMessage = "Address is required")]
-
         public string Address { get; set; }
 
         [Required(ErrorMessage = "Long is required")]

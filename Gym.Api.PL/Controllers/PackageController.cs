@@ -12,12 +12,12 @@ namespace Gym.Api.PL.Controllers
 {
     public class PackageController : BaseController
     {
-        private readonly IUnitOfWork unitOfWork;
+        private readonly IUnitOfWork _UnitOfWork;
         private readonly IMapper _mapper;
 
         public PackageController(IUnitOfWork unitOfWork, IMapper mapper)
         {
-            this.unitOfWork = unitOfWork;
+            _UnitOfWork = unitOfWork;
             _mapper = mapper;
         }
 
@@ -26,7 +26,7 @@ namespace Gym.Api.PL.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<PackageDTO>>> GetAll()
         {
-            var Package = await unitOfWork.packageRepository.GetAllAsync();
+            var Package = await _UnitOfWork.packageRepository.GetAllAsync();
             var map = _mapper.Map<IEnumerable<PackageDTO>>(Package);
             return Ok(map);
         }
@@ -36,7 +36,7 @@ namespace Gym.Api.PL.Controllers
         [HttpGet("{Id:int}")]
         public async Task<ActionResult<PackageDTO>> GetByIdAsync(int Id)
         {
-            var result = await unitOfWork.packageRepository.GetByIdAsync(Id);
+            var result = await _UnitOfWork.packageRepository.GetByIdAsync(Id);
             if (result is not null)
             {
                 var map = _mapper.Map<PackageDTO>(result);
@@ -49,7 +49,7 @@ namespace Gym.Api.PL.Controllers
         [HttpGet("{Name:alpha}")]
         public async Task<ActionResult<IEnumerable<PackageDTO>>> GetAll(string Name)
         {
-            var packages = await unitOfWork.packageRepository.SearchByName(Name);
+            var packages = await _UnitOfWork.packageRepository.SearchByName(Name);
             var map = _mapper.Map<IEnumerable<PackageDTO>>(packages);
             return Ok(map);
         }
@@ -62,7 +62,7 @@ namespace Gym.Api.PL.Controllers
             {
                 var map = _mapper.Map<Package>(packageDTO);
 
-                var count = await unitOfWork.packageRepository.AddAsync(map);
+                var count = await _UnitOfWork.packageRepository.AddAsync(map);
                 if(count > 0) 
                 {
                     return Ok(packageDTO);
@@ -70,7 +70,12 @@ namespace Gym.Api.PL.Controllers
                 return BadRequest(new ApiErrorResponse(StatusCodes.Status400BadRequest, "Error in save please try again"));
             }
 
-            return NotFound(new ApiErrorResponse(StatusCodes.Status404NotFound, "Package with this Id is not found"));
+                  return BadRequest(new ApiValidationResponse(400
+                  , "a bad Request , You have made"
+                  , ModelState.Values
+                  .SelectMany(v => v.Errors)
+                  .Select(e => e.ErrorMessage)
+                  .ToList()));
         }
 
 
@@ -81,7 +86,7 @@ namespace Gym.Api.PL.Controllers
             if (ModelState.IsValid)
             {
                 var map = _mapper.Map<Package>(packageDTO);
-                var count = await unitOfWork.packageRepository.Update(map);
+                var count = await _UnitOfWork.packageRepository.Update(map);
                 if (count > 0) 
                 {
                     return Ok(packageDTO);
@@ -102,10 +107,10 @@ namespace Gym.Api.PL.Controllers
         [HttpDelete("{Id}")]
         public async Task<ActionResult> Delete(int Id)
         {
-            var Package = await unitOfWork.packageRepository.GetByIdAsync(Id);
+            var Package = await _UnitOfWork.packageRepository.GetByIdAsync(Id);
             if (Package is not null)
             {
-                var count = await unitOfWork.packageRepository.Delete(Package);
+                var count = await _UnitOfWork.packageRepository.Delete(Package);
                 if (count > 0) 
                 {
                     return Ok();

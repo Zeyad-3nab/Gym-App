@@ -16,6 +16,7 @@ var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 var builder = WebApplication.CreateBuilder(args);
 
 
+#region Services
 //Allow all people
 builder.Services.AddCors(options =>
 {
@@ -41,7 +42,6 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 });
 
 
-
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>(Options => {
     Options.User.RequireUniqueEmail = true;
     Options.SignIn.RequireConfirmedAccount = false;
@@ -59,15 +59,16 @@ builder.Services.AddSwaggerGenJwtAuth();
 
 //Add Custom Extention
 builder.Services.AddCustomJwtAuth(builder.Configuration);
+#endregion
+
+
 var app = builder.Build();
 
 
-
-
-// Configure the HTTP request pipeline.
+#region Configure the HTTP request pipeline.
 //if (app.Environment.IsDevelopment())
 //{
-    app.UseSwagger();
+app.UseSwagger();
     app.UseSwaggerUI();
 //}
 app.UseStaticFiles();
@@ -81,5 +82,7 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
+
+#endregion
 
 app.Run();

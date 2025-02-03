@@ -22,6 +22,11 @@ namespace Gym.Api.PL.DTOs
         [Required(ErrorMessage = "Email is required")]
         public string Email { get; set; }
 
+        [Required(ErrorMessage = "Password is required")]
+        [RegularExpression(@"^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[\W_]).{8,}$",
+        ErrorMessage = "Password must be at least 8 characters long, include an uppercase letter, a lowercase letter, a number, and a special character.")]
+        public string Password { get; set; }
+
         [Required(ErrorMessage = "Long is required")]
         public double Long { get; set; }
 
@@ -61,8 +66,13 @@ namespace Gym.Api.PL.DTOs
         [Required(ErrorMessage = "NumberOfDayes is required")]
         public int NumberOfDayes { get; set; }
 
-        [Required(ErrorMessage = "PackageId is required")]
+        [Required(ErrorMessage = "StartPackage is required")]
+        public DateTime StartPackage { get; set; }
 
+        [Required(ErrorMessage = "EndPackage is required")]
+        public DateTime EndPackage { get; set; }
+
+        [Required(ErrorMessage = "PackageId is required")]
         public int PackageId { get; set; }
     }
 }

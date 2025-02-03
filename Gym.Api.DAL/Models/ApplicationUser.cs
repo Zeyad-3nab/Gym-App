@@ -16,7 +16,6 @@ namespace Gym.Api.DAL.Models
 
         public DateTime StartPackage { get; set; }
         public DateTime EndPackage { get; set; }
-
         public int PackageId { get; set; }
         public Package Package { get; set; }
 

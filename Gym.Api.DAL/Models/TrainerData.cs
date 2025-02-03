@@ -26,7 +26,6 @@ namespace Gym.Api.DAL.Models
         public string AnyInfection { get; set; }
         public string AbilityOfSystemMoney { get; set; }
         public int NumberOfDayes { get; set; }
-
         public int PackageId { get; set; }
         public Package Package { get; set; }
 

@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Azure;
 using Gym.Api.BLL.Interfaces;
+using Gym.Api.BLL.Repositories;
 using Gym.Api.BLL.Services;
 using Gym.Api.DAL.Models;
 using Gym.Api.PL.DTOs;
@@ -11,11 +12,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.IdentityModel.Tokens;
-using System.IdentityModel.Tokens.Jwt;
-using System.Net;
-using System.Security.Claims;
-using System.Text;
 
 namespace Gym.Api.PL.Controllers
 {
@@ -58,7 +54,8 @@ namespace Gym.Api.PL.Controllers
                 e.EndPackage,
                 e.Package.Name,
                 e.Package.Duration,
-                e.Package.Price
+                e.Package.OldPrice,
+                e.Package.NewPrice
             }).ToList();
 
             return Ok(users);
@@ -96,8 +93,11 @@ namespace Gym.Api.PL.Controllers
             {
                 var user = await _userManager.FindByEmailAsync(registerDTO.Email);
                 if (user is not null)
-                    return NotFound(new ApiErrorResponse(StatusCodes.Status404NotFound, "User with this Email is not found"));     
+                    return NotFound(new ApiErrorResponse(StatusCodes.Status404NotFound, "User with this Email is not found"));
 
+                var package = _unitOfWork.packageRepository.GetByIdAsync(registerDTO.PackageId);
+                if (package is null)
+                    return NotFound(new ApiErrorResponse(StatusCodes.Status404NotFound, "PackageId With this id is not found"));
 
                 var CheckPackage=await _unitOfWork.packageRepository.GetByIdAsync(registerDTO.PackageId);
                 if(CheckPackage is not null) 
@@ -150,14 +150,17 @@ namespace Gym.Api.PL.Controllers
                 {
                     if (await _userManager.CheckPasswordAsync(user, loginDTO.Password))
                     {
-                        var role = await _userManager.GetRolesAsync(user);
-                        return Ok(new UserDTO()
+                        var userDTO = new UserDTO()
                         {
                             Id = user.Id,
-                            role = role[0],
                             UserName = user.UserName,
+                            role="Trainer",
                             Token = await _TokenService.CreateTokenAsync(user, _userManager)
-                        });
+                        };
+                        var checkTrainer = await _userManager.IsInRoleAsync(user, "Admin");
+                        if (checkTrainer)
+                            userDTO.role = "Admin";
+                        return Ok(userDTO);
                     }
                     return NotFound(new ApiErrorResponse(StatusCodes.Status400BadRequest, "Password with this Email inCorrect"));
                 }
@@ -171,6 +174,7 @@ namespace Gym.Api.PL.Controllers
                        .ToList()));
         }
 
+
         [Authorize]
         [HttpPut("UpdateUser")]
         public async Task<ActionResult> UpdateUser([FromBody]UpdateuserDTO registerDTO)
@@ -181,6 +185,10 @@ namespace Gym.Api.PL.Controllers
 
                 if (user is not null)
                 {
+                    var package = _unitOfWork.packageRepository.GetByIdAsync(registerDTO.PackageId);
+                    if (package is null)
+                        return NotFound(new ApiErrorResponse(StatusCodes.Status404NotFound, "PackageId With this id is not found"));
+
                     user.Address= registerDTO.Address;
                     user.PhoneNumber = registerDTO.PhoneNumber;
                     user.Long=registerDTO.Long;

@@ -42,7 +42,7 @@ namespace Gym.Api.PL.Controllers
                         {
                             return Ok(userExerciseDTO);
                         }
-                        return BadRequest(new ApiErrorResponse(StatusCodes.Status400BadRequest , "a bad Request , You have made"));
+                        return BadRequest(new ApiErrorResponse(StatusCodes.Status400BadRequest , "Error is save please try again"));
                     }
                     return NotFound(new ApiErrorResponse(StatusCodes.Status404NotFound, "Exercise with this Id is not found"));
                 }
@@ -66,13 +66,12 @@ namespace Gym.Api.PL.Controllers
             {
                 var user = await _UserManager.FindByIdAsync(removeExercise.UserId);
                 if(user is null) 
-                {
-                    return NotFound(new ApiErrorResponse(StatusCodes.Status404NotFound, "User with this id is not found"));
-                }
+                  return NotFound(new ApiErrorResponse(StatusCodes.Status404NotFound, "User with this Id is not found"));
+
                 var count =await _UnitOfWork.userExerciseRepository.RemoveExerciseFromUser(removeExercise.UserId, removeExercise.ExerciseId);
                 if (count > 0)
                     return Ok();
-                return BadRequest(new ApiErrorResponse(StatusCodes.Status400BadRequest, "User don,t have this exercise"));
+                return BadRequest(new ApiErrorResponse(StatusCodes.Status400BadRequest, "User don't have this exercise"));
             }
             return BadRequest(new ApiValidationResponse(400
          , "a bad Request , You have made"
@@ -91,6 +90,7 @@ namespace Gym.Api.PL.Controllers
             var user =await _UserManager.FindByIdAsync(userId);
             if(user is null)
                 return NotFound(new ApiErrorResponse(StatusCodes.Status404NotFound, "User with this Id is not found"));
+
             var exercises = await _UnitOfWork.userExerciseRepository.GetAllExercisesOfUser(userId);
             var map = _Mapper.Map<IEnumerable<UserExerciseDTO>>(exercises);
             return Ok(map);

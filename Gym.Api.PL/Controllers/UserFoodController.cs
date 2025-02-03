@@ -27,7 +27,7 @@ namespace Gym.Api.PL.Controllers
 
         [Authorize(Roles = "Admin")]
         [HttpPost("AddFoodToUser")]
-        public async Task<ActionResult> AddExerciseToUser(UserFoodDTO userFoodDTO)
+        public async Task<ActionResult> AddFoodToUser(UserFoodDTO userFoodDTO)
         {
             if (ModelState.IsValid)
             {
@@ -48,30 +48,29 @@ namespace Gym.Api.PL.Controllers
                 return NotFound(new ApiErrorResponse(StatusCodes.Status404NotFound, "User with this Id is not found"));
             }
             return BadRequest(new ApiValidationResponse(400
-                     , "a bad Request , You have made"
-                     , ModelState.Values
-                     .SelectMany(v => v.Errors)
-                     .Select(e => e.ErrorMessage)
-                     .ToList()));
+            , "a bad Request , You have made"
+            , ModelState.Values
+            .SelectMany(v => v.Errors)
+            .Select(e => e.ErrorMessage)
+            .ToList()));
 
         }
 
 
         [Authorize(Roles = "Admin")]
         [HttpDelete("RemoveFoodFromUser")]
-        public async Task<ActionResult> RemoveExerciseFromUser(RemoveFoodFromUserDTO removeFood)
+        public async Task<ActionResult> RemoveFoodFromUser(RemoveFoodFromUserDTO removeFood)
         {
             if (ModelState.IsValid)
             {
                 var user = await _UserManager.FindByIdAsync(removeFood.UserId);
                 if (user is null)
-                {
                     return NotFound(new ApiErrorResponse(StatusCodes.Status404NotFound, "User with this id is not found"));
-                }
+
                 var count = await _UnitOfWork.userFoodRepository.RemoveFoodFromUser(removeFood.UserId, removeFood.FoodId);
                 if (count > 0)
                     return Ok();
-                return BadRequest(new ApiErrorResponse(StatusCodes.Status400BadRequest, "User don't have this exercise"));
+                return BadRequest(new ApiErrorResponse(StatusCodes.Status400BadRequest, "User don't have this food"));
             }
             return BadRequest(new ApiValidationResponse(400
          , "a bad Request , You have made"

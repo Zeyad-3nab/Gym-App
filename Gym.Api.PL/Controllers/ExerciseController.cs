@@ -49,18 +49,17 @@ namespace Gym.Api.PL.Controllers
             return Ok(map);
         }
 
-
         [Authorize]
         [HttpGet("{Id:int}")]
         public async Task<ActionResult<ExerciseDTO>> GetByIdAsync(int Id)
         {
             var result = await _UnitOfWork.exerciseRepository.GetByIdAsync(Id);
             if (result is not null)
-            {
-                var map = _mapper.Map<ExerciseDTO>(result);
-                return Ok(map);
-            }
-            return NotFound(new ApiErrorResponse(StatusCodes.Status404NotFound, "Exercise with this Id is not found"));
+                return NotFound(new ApiErrorResponse(StatusCodes.Status404NotFound, "Exercise with this Id is not found"));
+
+            var map = _mapper.Map<ExerciseDTO>(result);
+            return Ok(map);
+           
         }
 
         [Authorize(Roles ="Admin")]
@@ -123,12 +122,7 @@ namespace Gym.Api.PL.Controllers
                 }
                 return BadRequest(new ApiErrorResponse(StatusCodes.Status400BadRequest, "Error in saveing please try again"));
             }
-            return BadRequest(new ApiValidationResponse(400
-                     , "a bad Request , You have made"
-                     , ModelState.Values
-                     .SelectMany(v => v.Errors)
-                     .Select(e => e.ErrorMessage)
-                     .ToList()));
+            return NotFound(new ApiErrorResponse(StatusCodes.Status404NotFound, "Exercise with this Id is npt found"));
         }
     }
 }

@@ -9,7 +9,8 @@ namespace Gym.Api.DAL.Models
     public class Package:BaseModel<int>
     {
         public string Name { get; set; }
-        public double Price { get; set; }
+        public double OldPrice { get; set; }
+        public double NewPrice { get; set; }
         public int Duration { get; set; }
         public bool IsActive { get; set; } = true;
         public string PackageType { get; set; }

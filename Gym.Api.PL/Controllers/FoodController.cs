@@ -79,7 +79,12 @@ namespace Gym.Api.PL.Controllers
                 return BadRequest(new ApiErrorResponse(StatusCodes.Status400BadRequest, "Error in save please try again"));
             }
 
-            return NotFound(new ApiErrorResponse(StatusCodes.Status404NotFound, "fOOD with this Id is not found"));
+            return BadRequest(new ApiValidationResponse(400
+                    , "a bad Request , You have made"
+                    , ModelState.Values
+                    .SelectMany(v => v.Errors)
+                    .Select(e => e.ErrorMessage)
+                    .ToList()));
         }
 
 
@@ -128,12 +133,7 @@ namespace Gym.Api.PL.Controllers
                 }
                 return BadRequest(new ApiErrorResponse(StatusCodes.Status400BadRequest, "Error in saveing please try again"));
             }
-            return BadRequest(new ApiValidationResponse(400
-                     , "a bad Request , You have made"
-                     , ModelState.Values
-                     .SelectMany(v => v.Errors)
-                     .Select(e => e.ErrorMessage)
-                     .ToList()));
+            return NotFound(new ApiErrorResponse(StatusCodes.Status404NotFound, "Food with this Id is not found"));
         }
 
     }

@@ -12,8 +12,11 @@ namespace Gym.Api.PL.DTOs
         [Required(ErrorMessage = "Name is required")]
         public string Name { get; set; }
 
-        [Required(ErrorMessage = "Price is required")]
-        public double Price { get; set; }
+        [Required(ErrorMessage = "OldPrice is required")]
+        public double OldPrice { get; set; }
+
+        [Required(ErrorMessage = "NewPrice is required")]
+        public double NewPrice { get; set; }
 
         [Required(ErrorMessage = "Duration is required")]
         public int Duration { get; set; }
