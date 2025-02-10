@@ -4,37 +4,37 @@ namespace Gym.Api.PL.DTOs
 {
     public class UpdateuserDTO
     {
-        [Required(ErrorMessage = "Id is required")]
+        [Required(ErrorMessage = "IdRequired")]
         public string Id { get; set; }
 
-        [Required(ErrorMessage = "UserName is required")]
+        [Required(ErrorMessage = "UserNameRequired")]
         public string UserName { get; set; }
 
-        [Required(ErrorMessage = "Phone is required")]
+        [Required(ErrorMessage = "PhoneRequired")]
         public string PhoneNumber { get; set; }
 
-        [Required(ErrorMessage = "Email is required")]
+        [Required(ErrorMessage = "EmailRequired")]
         public string Email { get; set; }
 
-        [Required(ErrorMessage = "Address is required")]
+        [Required(ErrorMessage = "AddressRequired")]
         public string Address { get; set; }
 
-        [Required(ErrorMessage = "Long is required")]
+        [Required(ErrorMessage = "LongRequired")]
         public double Long { get; set; }
 
-        [Required(ErrorMessage = "Weight is required")]
+        [Required(ErrorMessage = "WeightRequired")]
         public double Weight { get; set; }
 
-        [Required(ErrorMessage = "Age is required")]
+        [Required(ErrorMessage = "AgeRequired")]
         public double Age { get; set; }
 
-        [Required(ErrorMessage = "StartPackage is required")]
+        [Required(ErrorMessage = "StartPackageRequired")]
         public DateTime StartPackage { get; set; }
 
-        [Required(ErrorMessage = "EndPackage is required")]
+        [Required(ErrorMessage = "EndPackageRequired")]
         public DateTime EndPackage { get; set; }
 
-        [Required(ErrorMessage = "PackageId is required")]
+        [Required(ErrorMessage = "PackageIdRequired")]
         public int PackageId { get; set; }
     }
 }

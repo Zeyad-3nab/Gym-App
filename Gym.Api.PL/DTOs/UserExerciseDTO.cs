@@ -4,16 +4,16 @@ namespace Gym.Api.PL.DTOs
 {
     public class UserExerciseDTO
     {
-        [Required(ErrorMessage ="UserId is required")]
+        [Required(ErrorMessage = "ApplicationUserIdRequired")]
         public string applicationUserId { get; set; }
 
-        [Required(ErrorMessage ="ExerciseId is required")]
+        [Required(ErrorMessage ="ExerciseIdRequired")]
         public int exerciseId { get; set; }
 
-        [Required(ErrorMessage ="Number Of Groups is required")]
+        [Required(ErrorMessage = "NumOfGroupsRequired")]
         public int NumOfGroups { get; set; }
 
-        [Required(ErrorMessage ="Number Of Count is required")]
+        [Required(ErrorMessage = "NumOfCountRequired")]
         public int NumOfCount { get; set; }
     }
 }

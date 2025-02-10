@@ -2,12 +2,14 @@
 using Gym.Api.BLL.Interfaces;
 using Gym.Api.BLL.Repositories;
 using Gym.Api.DAL.Models;
+using Gym.Api.DAL.Resources;
 using Gym.Api.PL.DTOs;
 using Gym.Api.PL.Errors;
 using Gym.Api.PL.Helpers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Localization;
 
 namespace Gym.Api.PL.Controllers
 {
@@ -16,11 +18,13 @@ namespace Gym.Api.PL.Controllers
     {
         private readonly IUnitOfWork _UnitOfWork;
         private readonly IMapper _mapper;
+        private readonly IStringLocalizer<SharedResources> _localizer;
 
-        public FoodController(IUnitOfWork unitOfWork, IMapper mapper)
+        public FoodController(IUnitOfWork unitOfWork, IMapper mapper , IStringLocalizer<SharedResources> localizer)
         {
             _UnitOfWork = unitOfWork;
             _mapper = mapper;
+            _localizer = localizer;
         }
 
 
@@ -54,7 +58,7 @@ namespace Gym.Api.PL.Controllers
                 var map = _mapper.Map<FoodDTO>(result);
                 return Ok(map);
             }
-            return NotFound(new ApiErrorResponse(StatusCodes.Status404NotFound, "Food with this Id is not found"));
+            return NotFound(new ApiErrorResponse(StatusCodes.Status404NotFound, _localizer["FoodIdNotFound"]));
         }
 
 
@@ -76,11 +80,11 @@ namespace Gym.Api.PL.Controllers
                 {
                     return Ok(foodDTO);
                 }
-                return BadRequest(new ApiErrorResponse(StatusCodes.Status400BadRequest, "Error in save please try again"));
+                return BadRequest(new ApiErrorResponse(StatusCodes.Status400BadRequest, _localizer["ErrorInSaving"]));
             }
 
             return BadRequest(new ApiValidationResponse(400
-                    , "a bad Request , You have made"
+                    , _localizer["BadRequestMessage"]
                     , ModelState.Values
                     .SelectMany(v => v.Errors)
                     .Select(e => e.ErrorMessage)
@@ -108,10 +112,10 @@ namespace Gym.Api.PL.Controllers
                 {
                     return Ok(foodDTO);
                 }
-                return BadRequest(new ApiErrorResponse(StatusCodes.Status400BadRequest, "Error in saveing please try again"));
+                return BadRequest(new ApiErrorResponse(StatusCodes.Status400BadRequest, _localizer["ErrorInSaving"]));
             }
             return BadRequest(new ApiValidationResponse(400
-                     , "a bad Request , You have made"
+                     , _localizer["BadRequestMessage"]
                      , ModelState.Values
                      .SelectMany(v => v.Errors)
                      .Select(e => e.ErrorMessage)
@@ -131,9 +135,9 @@ namespace Gym.Api.PL.Controllers
                 {
                     return Ok(Id);
                 }
-                return BadRequest(new ApiErrorResponse(StatusCodes.Status400BadRequest, "Error in saveing please try again"));
+                return BadRequest(new ApiErrorResponse(StatusCodes.Status400BadRequest, _localizer["ErrorInSaving"]));
             }
-            return NotFound(new ApiErrorResponse(StatusCodes.Status404NotFound, "Food with this Id is not found"));
+            return NotFound(new ApiErrorResponse(StatusCodes.Status404NotFound, _localizer["FoodIdNotFound"]));
         }
 
     }

@@ -4,9 +4,10 @@ namespace Gym.Api.PL.DTOs
 {
     public class RemoveExerciseFromUserDTO
     {
-        [Required(ErrorMessage ="Exercise Id is required")]
+        [Required(ErrorMessage = "ExerciseIdRequired")]
         public int ExerciseId { get; set; }
-        [Required(ErrorMessage ="User Id is required")]
+
+        [Required(ErrorMessage ="UserIdRequired")]
         public string UserId { get; set; }
     }
 }

@@ -4,6 +4,7 @@ using Gym.Api.DAL.Data.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Gym.Api.DAL.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250209055832_AddExercise")]
+    partial class AddExercise
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -214,6 +217,9 @@ namespace Gym.Api.DAL.Data.Migrations
                     b.Property<int>("ExerciseId")
                         .HasColumnType("int");
 
+                    b.Property<int>("ExerciseSystemId")
+                        .HasColumnType("int");
+
                     b.Property<int>("NumOfCount")
                         .HasColumnType("int");
 
@@ -223,6 +229,8 @@ namespace Gym.Api.DAL.Data.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("ExerciseId");
+
+                    b.HasIndex("ExerciseSystemId");
 
                     b.ToTable("exerciseSystemItems");
                 });
@@ -573,7 +581,15 @@ namespace Gym.Api.DAL.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("Gym.Api.DAL.Models.ExerciseSystem", "exerciseSystem")
+                        .WithMany()
+                        .HasForeignKey("ExerciseSystemId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("exercise");
+
+                    b.Navigation("exerciseSystem");
                 });
 
             modelBuilder.Entity("Gym.Api.DAL.Models.TrainerData", b =>

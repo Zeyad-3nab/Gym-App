@@ -4,18 +4,18 @@ namespace Gym.Api.PL.DTOs
 {
     public class FoodDTO
     {
-        [Required(ErrorMessage = "Id is required")]
+        [Required(ErrorMessage = "IdRequired")]
         public int Id { get; set; }
-        [Required(ErrorMessage = "Name is required")]
+        [Required(ErrorMessage = "NameRequired")]
         public string Name { get; set; }
-        [Required(ErrorMessage = "Number Of Calories is required")]
+        [Required(ErrorMessage = "NumOfCaloriesRequired")]
         public double NumOfCalories { get; set; }
 
-        [Required(ErrorMessage = "Number Of Protein is required")]
+        [Required(ErrorMessage = "NumOfProteinRequired")]
         public double NumOfProtein { get; set; }
         public string? ImageURL { get; set; }
 
-        [Required(ErrorMessage = "Image is required")]
+        [Required(ErrorMessage = "ImageRequired")]
         public IFormFile Image { get; set; }
     }
 }

@@ -1,11 +1,13 @@
 ﻿using AutoMapper;
 using Gym.Api.BLL.Interfaces;
 using Gym.Api.DAL.Models;
+using Gym.Api.DAL.Resources;
 using Gym.Api.PL.DTOs;
 using Gym.Api.PL.Errors;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Localization;
 using System.Net;
 
 namespace Gym.Api.PL.Controllers
@@ -15,11 +17,13 @@ namespace Gym.Api.PL.Controllers
     {
         private readonly IUnitOfWork _UnitOfWork;
         private readonly IMapper _mapper;
+        private readonly IStringLocalizer<SharedResources> _localizer;
 
-        public ExerciseController(IUnitOfWork unitOfWork, IMapper mapper)
+        public ExerciseController(IUnitOfWork unitOfWork, IMapper mapper , IStringLocalizer<SharedResources> localizer)
         {
             _UnitOfWork = unitOfWork;
             _mapper = mapper;
+            _localizer = localizer;
         }
 
         [Authorize]
@@ -55,14 +59,14 @@ namespace Gym.Api.PL.Controllers
         {
             var result = await _UnitOfWork.exerciseRepository.GetByIdAsync(Id);
             if (result is not null)
-                return NotFound(new ApiErrorResponse(StatusCodes.Status404NotFound, "Exercise with this Id is not found"));
+                return NotFound(new ApiErrorResponse(StatusCodes.Status404NotFound, _localizer["ExerciseIdNotFound"]));
 
             var map = _mapper.Map<ExerciseDTO>(result);
             return Ok(map);
            
         }
 
-        [Authorize(Roles ="Admin")]
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task<ActionResult> Add([FromBody] ExerciseDTO exerciseDTO)
         {
@@ -75,10 +79,10 @@ namespace Gym.Api.PL.Controllers
                 {
                     return Ok(exerciseDTO);
                 }
-                return BadRequest(new ApiErrorResponse(StatusCodes.Status400BadRequest, "Error in saveing please try again"));
+                return BadRequest(new ApiErrorResponse(StatusCodes.Status400BadRequest, _localizer["ErrorInSaving"]));
             }
             return BadRequest(new ApiValidationResponse(400
-                       , "a bad Request , You have made"
+                       , _localizer["BadRequestMessage"]
                        , ModelState.Values
                        .SelectMany(v => v.Errors)
                        .Select(e => e.ErrorMessage)
@@ -98,10 +102,10 @@ namespace Gym.Api.PL.Controllers
                 {
                     return Ok(exerciseDTO);
                 }
-                return BadRequest(new ApiErrorResponse(StatusCodes.Status400BadRequest, "Error in saveing please try again"));
+                return BadRequest(new ApiErrorResponse(StatusCodes.Status400BadRequest, _localizer["ErrorInSaving"]));
             }
             return BadRequest(new ApiValidationResponse(400
-                     , "a bad Request , You have made"
+                     , _localizer["BadRequestMessage"]
                      , ModelState.Values
                      .SelectMany(v => v.Errors)
                      .Select(e => e.ErrorMessage)
@@ -120,9 +124,9 @@ namespace Gym.Api.PL.Controllers
                 {
                     return Ok(Id);
                 }
-                return BadRequest(new ApiErrorResponse(StatusCodes.Status400BadRequest, "Error in saveing please try again"));
+                return BadRequest(new ApiErrorResponse(StatusCodes.Status400BadRequest, _localizer["ErrorInSaving"]));
             }
-            return NotFound(new ApiErrorResponse(StatusCodes.Status404NotFound, "Exercise with this Id is npt found"));
+            return NotFound(new ApiErrorResponse(StatusCodes.Status404NotFound, _localizer["ExerciseIdNotFound"]));
         }
     }
 }

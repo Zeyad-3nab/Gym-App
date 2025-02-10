@@ -1,11 +1,13 @@
 ﻿using AutoMapper;
 using Gym.Api.BLL.Interfaces;
 using Gym.Api.DAL.Models;
+using Gym.Api.DAL.Resources;
 using Gym.Api.PL.DTOs;
 using Gym.Api.PL.Errors;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Localization;
 using System.Net;
 
 namespace Gym.Api.PL.Controllers
@@ -14,11 +16,13 @@ namespace Gym.Api.PL.Controllers
     {
         private readonly IUnitOfWork _UnitOfWork;
         private readonly IMapper _mapper;
+        private readonly IStringLocalizer<SharedResources> _localizer;
 
-        public PackageController(IUnitOfWork unitOfWork, IMapper mapper)
+        public PackageController(IUnitOfWork unitOfWork, IMapper mapper , IStringLocalizer<SharedResources> localizer)
         {
             _UnitOfWork = unitOfWork;
             _mapper = mapper;
+            _localizer = localizer;
         }
 
 
@@ -42,7 +46,7 @@ namespace Gym.Api.PL.Controllers
                 var map = _mapper.Map<PackageDTO>(result);
                 return Ok(map);
             }
-            return NotFound(new ApiErrorResponse(StatusCodes.Status404NotFound, "Package with this Id is not found"));
+            return NotFound(new ApiErrorResponse(StatusCodes.Status404NotFound, _localizer["PackageIdNotFound"]));
         }
 
         [AllowAnonymous]
@@ -67,11 +71,11 @@ namespace Gym.Api.PL.Controllers
                 {
                     return Ok(packageDTO);
                 }
-                return BadRequest(new ApiErrorResponse(StatusCodes.Status400BadRequest, "Error in save please try again"));
+                return BadRequest(new ApiErrorResponse(StatusCodes.Status400BadRequest, _localizer["ErrorInSaving"]));
             }
 
                   return BadRequest(new ApiValidationResponse(400
-                  , "a bad Request , You have made"
+                  , _localizer["BadRequestMessage"]
                   , ModelState.Values
                   .SelectMany(v => v.Errors)
                   .Select(e => e.ErrorMessage)
@@ -91,11 +95,11 @@ namespace Gym.Api.PL.Controllers
                 {
                     return Ok(packageDTO);
                 }
-                return BadRequest(new ApiErrorResponse(StatusCodes.Status400BadRequest, "Error in save please try again"));
+                return BadRequest(new ApiErrorResponse(StatusCodes.Status400BadRequest, _localizer["ErrorInSaving"]));
             }
 
             return BadRequest(new ApiValidationResponse(400
-         , "a bad Request , You have made"
+         , _localizer["BadRequestMessage"]
          , ModelState.Values
          .SelectMany(v => v.Errors)
          .Select(e => e.ErrorMessage)
@@ -115,10 +119,10 @@ namespace Gym.Api.PL.Controllers
                 {
                     return Ok();
                 }
-                return BadRequest(new ApiErrorResponse(StatusCodes.Status400BadRequest, "Error in Delete please try again"));
+                return BadRequest(new ApiErrorResponse(StatusCodes.Status400BadRequest, _localizer["ErrorInSaving"]));
             }
 
-            return NotFound(new ApiErrorResponse(StatusCodes.Status404NotFound, "Package with this Id is not found"));
+            return NotFound(new ApiErrorResponse(StatusCodes.Status404NotFound, _localizer["PackageIdNotFound"]));
         }
     }
 }

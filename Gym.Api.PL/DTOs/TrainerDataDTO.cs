@@ -4,75 +4,85 @@ namespace Gym.Api.PL.DTOs
 {
     public class TrainerDataDTO
     {
-        [Required(ErrorMessage = "Id is required")]
+        [Required(ErrorMessage = "IdRequired")]
         public int Id { get; set; }
 
-        [Required(ErrorMessage = "UserName is required")]
+        [Required(ErrorMessage = "UserNameRequired")]
         public string UserName { get; set; }
 
-        [Required(ErrorMessage = "Age is required")]
+        [Required(ErrorMessage = "AgeRequired")]
         public int Age { get; set; }
 
-        [Required(ErrorMessage = "Address is required")]
+        [Required(ErrorMessage = "AddressRequired")]
         public string Address { get; set; }
 
-        [Required(ErrorMessage = "Phone is required")]
+        [Required(ErrorMessage = "PhoneRequired")]
         public string Phone { get; set; }
 
-        [Required(ErrorMessage = "Email is required")]
+        [Required(ErrorMessage = "EmailRequired")]
         public string Email { get; set; }
 
-        [Required(ErrorMessage = "Password is required")]
+        [Required(ErrorMessage = "PasswordRequired")]
         [RegularExpression(@"^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[\W_]).{8,}$",
-        ErrorMessage = "Password must be at least 8 characters long, include an uppercase letter, a lowercase letter, a number, and a special character.")]
+        ErrorMessage = "PasswordShape")]
         public string Password { get; set; }
 
-        [Required(ErrorMessage = "Long is required")]
+        [Required(ErrorMessage = "LongRequired")]
         public double Long { get; set; }
 
-        [Required(ErrorMessage = "Weight is required")]
+        [Required(ErrorMessage = "WeightRequired")]
         public double Weight { get; set; }
 
-        [Required(ErrorMessage = "DailyWork is required")]
+        [Required(ErrorMessage = "DailyWorkRequired")]
         public string DailyWork { get; set; }
 
-        [Required(ErrorMessage = "AreYouSomker is required")]
+        [Required(ErrorMessage = "AreYouSomkerRequired")]
         public string AreYouSomker { get; set; }
 
-        [Required(ErrorMessage = "AimOfJoin is required")]
+        [Required(ErrorMessage = "AimOfJoinRequired")]
         public string AimOfJoin { get; set; }
 
-        [Required(ErrorMessage = "AnyPains is required")]
+        [Required(ErrorMessage = "AnyPainsRequired")]
         public string AnyPains { get; set; }
 
-        [Required(ErrorMessage = "AllergyOfFood is required")]
+        [Required(ErrorMessage = "AllergyOfFoodRequired")]
         public string AllergyOfFood { get; set; }
 
-        [Required(ErrorMessage = "FoodSystem is required")]
+        [Required(ErrorMessage = "FoodSystemRequired")]
         public string FoodSystem { get; set; }
 
-        [Required(ErrorMessage = "NumberOfMeals is required")]
+        [Required(ErrorMessage = "NumberOfMealsRequired")]
         public int NumberOfMeals { get; set; }
 
-        [Required(ErrorMessage = "LastExercise is required")]
+        [Required(ErrorMessage = "LastExerciseRequired")]
         public string LastExercise { get; set; }
 
-        [Required(ErrorMessage = "AnyInfection is required")]
+        [Required(ErrorMessage = "AnyInfectionRequired")]
         public string AnyInfection { get; set; }
 
-        [Required(ErrorMessage = "AbilityOfSystemMoney is required")]
+        [Required(ErrorMessage = "AbilityOfSystemMoneyRequired")]
         public string AbilityOfSystemMoney { get; set; }
 
-        [Required(ErrorMessage = "NumberOfDayes is required")]
+        [Required(ErrorMessage = "NumberOfDayesRequired")]
         public int NumberOfDayes { get; set; }
 
-        [Required(ErrorMessage = "StartPackage is required")]
+        private string gender;
+
+        [Required(ErrorMessage = "GenderRequired")]
+        public string Gender
+        {
+            get { return gender; }
+            set { gender = value.ToLower(); }
+        }
+
+
+        [Required(ErrorMessage = "StartPackageRequired")]
         public DateTime StartPackage { get; set; }
 
-        [Required(ErrorMessage = "EndPackage is required")]
+        [Required(ErrorMessage = "EndPackageRequired")]
         public DateTime EndPackage { get; set; }
 
-        [Required(ErrorMessage = "PackageId is required")]
+        [Required(ErrorMessage = "PackageIdRequired")]
         public int PackageId { get; set; }
     }
 }

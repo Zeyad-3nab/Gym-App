@@ -4,6 +4,7 @@ using Gym.Api.DAL.Data.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Gym.Api.DAL.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250205231930_AddGenderConfig1")]
+    partial class AddGenderConfig1
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -50,10 +53,6 @@ namespace Gym.Api.DAL.Data.Migrations
 
                     b.Property<DateTime>("EndPackage")
                         .HasColumnType("datetime2");
-
-                    b.Property<string>("Gender")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("bit");
@@ -181,52 +180,6 @@ namespace Gym.Api.DAL.Data.Migrations
                     b.ToTable("Exercise");
                 });
 
-            modelBuilder.Entity("Gym.Api.DAL.Models.ExerciseSystem", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int?>("ExerciseSystemId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ExerciseSystemId");
-
-                    b.ToTable("exerciseSystems");
-                });
-
-            modelBuilder.Entity("Gym.Api.DAL.Models.ExerciseSystemItem", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("ExerciseId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("NumOfCount")
-                        .HasColumnType("int");
-
-                    b.Property<int>("NumOfGroups")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ExerciseId");
-
-                    b.ToTable("exerciseSystemItems");
-                });
-
             modelBuilder.Entity("Gym.Api.DAL.Models.Food", b =>
                 {
                     b.Property<int>("Id")
@@ -335,10 +288,6 @@ namespace Gym.Api.DAL.Data.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("FoodSystem")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Gender")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -558,24 +507,6 @@ namespace Gym.Api.DAL.Data.Migrations
                     b.Navigation("food");
                 });
 
-            modelBuilder.Entity("Gym.Api.DAL.Models.ExerciseSystem", b =>
-                {
-                    b.HasOne("Gym.Api.DAL.Models.ExerciseSystem", null)
-                        .WithMany("exerciseSystems")
-                        .HasForeignKey("ExerciseSystemId");
-                });
-
-            modelBuilder.Entity("Gym.Api.DAL.Models.ExerciseSystemItem", b =>
-                {
-                    b.HasOne("Gym.Api.DAL.Models.Exercise", "exercise")
-                        .WithMany()
-                        .HasForeignKey("ExerciseId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("exercise");
-                });
-
             modelBuilder.Entity("Gym.Api.DAL.Models.TrainerData", b =>
                 {
                     b.HasOne("Gym.Api.DAL.Models.Package", "Package")
@@ -636,11 +567,6 @@ namespace Gym.Api.DAL.Data.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("Gym.Api.DAL.Models.ExerciseSystem", b =>
-                {
-                    b.Navigation("exerciseSystems");
                 });
 #pragma warning restore 612, 618
         }

@@ -5,26 +5,26 @@ namespace Gym.Api.PL.DTOs
 {
     public class PackageDTO
     {
-        [Required(ErrorMessage = "Id is required")]
+        [Required(ErrorMessage = "IdRequired")]
         public int Id { get; set; }
 
 
-        [Required(ErrorMessage = "Name is required")]
+        [Required(ErrorMessage = "NameRequired")]
         public string Name { get; set; }
 
-        [Required(ErrorMessage = "OldPrice is required")]
+        [Required(ErrorMessage = "OldPriceRequired")]
         public double OldPrice { get; set; }
 
-        [Required(ErrorMessage = "NewPrice is required")]
+        [Required(ErrorMessage = "NewPriceRequired")]
         public double NewPrice { get; set; }
 
-        [Required(ErrorMessage = "Duration is required")]
+        [Required(ErrorMessage = "DurationRequired")]
         public int Duration { get; set; }
 
-        [Required(ErrorMessage = "IsActive is required")]
+        [Required(ErrorMessage = "IsActiveRequired")]
         public bool IsActive { get; set; }
 
-        [Required(ErrorMessage = "Type is required")]
+        [Required(ErrorMessage = "TypeRequired")]
         public string PackageType { get; set; }
     }
 }

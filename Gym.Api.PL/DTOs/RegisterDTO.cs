@@ -4,37 +4,46 @@ namespace Gym.Api.PL.DTOs
 {
     public class RegisterDTO
     {
-        [Required(ErrorMessage = "UserName is required")]
+        [Required(ErrorMessage = "UserNameRequired")]
         public string UserName { get; set; }
 
-        [Required(ErrorMessage = "Phone is required")]
+        [Required(ErrorMessage = "PhoneRequired")]
         public string PhoneNumber { get; set; }
 
-        [Required(ErrorMessage = "Email is required")]
+        [Required(ErrorMessage = "EmailRequired")]
         public string Email { get; set; }
 
-        [Required(ErrorMessage = "Password is required")]
+        [Required(ErrorMessage = "PasswordRequired")]
         public string Password { get; set; }
 
-        [Required(ErrorMessage = "Address is required")]
+        [Required(ErrorMessage = "AddressRequired")]
         public string Address { get; set; }
 
-        [Required(ErrorMessage = "Long is required")]
+        [Required(ErrorMessage = "LongRequired")]
         public double Long { get; set; }
 
-        [Required(ErrorMessage = "Weight is required")]
+        [Required(ErrorMessage = "WeightRequired")]
         public double Weight { get; set; }
 
-        [Required(ErrorMessage = "Age is required")]
+        [Required(ErrorMessage = "AgeRequired")]
         public double Age { get; set; }
 
-        [Required(ErrorMessage = "StartPackage is required")]
+        private string gender;
+
+        [Required(ErrorMessage = "GenderRequired")]
+        public string Gender
+        {
+            get { return gender; }
+            set { gender = value.ToLower(); }
+        }
+
+        [Required(ErrorMessage = "StartPackageRequired")]
         public DateTime StartPackage { get; set; }
 
-        [Required(ErrorMessage = "EndPackage is required")]
+        [Required(ErrorMessage = "EndPackageRequired")]
         public DateTime EndPackage { get; set; }
 
-        [Required(ErrorMessage = "PackageId is required")]
+        [Required(ErrorMessage = "PackageIdRequired")]
         public int PackageId { get; set; }
     }
 }

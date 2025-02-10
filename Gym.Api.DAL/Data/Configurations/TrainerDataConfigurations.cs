@@ -32,6 +32,7 @@ namespace Gym.Api.DAL.Data.Configurations
             builder.Property(T => T.AnyPains).IsRequired();
             builder.Property(T => T.AllergyOfFood).IsRequired();
             builder.Property(T => T.FoodSystem).IsRequired();
+            builder.Property(T => T.Gender).IsRequired();
             builder.Property(T => T.NumberOfMeals).IsRequired();
             builder.Property(T => T.LastExercise).IsRequired();
             builder.Property(T => T.AnyInfection).IsRequired();

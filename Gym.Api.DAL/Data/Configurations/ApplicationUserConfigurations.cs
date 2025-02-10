@@ -29,6 +29,7 @@ namespace Gym.Api.DAL.Data.Configurations
             builder.Property(A => A.Address).IsRequired();
             builder.Property(A => A.Long).IsRequired();
             builder.Property(A => A.Weight).IsRequired();
+            builder.Property(A => A.Gender).IsRequired();
             builder.Property(A => A.PackageId).IsRequired();
         }
     }

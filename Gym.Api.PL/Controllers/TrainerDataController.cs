@@ -3,12 +3,14 @@ using Gym.Api.BLL.Interfaces;
 using Gym.Api.BLL.Repositories;
 using Gym.Api.BLL.Services;
 using Gym.Api.DAL.Models;
+using Gym.Api.DAL.Resources;
 using Gym.Api.PL.DTOs;
 using Gym.Api.PL.Errors;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Localization;
 using System.Net;
 
 namespace Gym.Api.PL.Controllers
@@ -19,13 +21,19 @@ namespace Gym.Api.PL.Controllers
         private readonly IMapper _mapper;
         private readonly UserManager<ApplicationUser> _UserManager;
         private readonly ITokenService _TokenService;
+        private readonly IStringLocalizer<SharedResources> _localizer;
 
-        public TrainerDataController(IUnitOfWork unitOfWork, IMapper mapper, UserManager<ApplicationUser> userManager, ITokenService tokenService)
+        public TrainerDataController(IUnitOfWork unitOfWork
+                                     , IMapper mapper 
+                                     , UserManager<ApplicationUser> userManager 
+                                     , ITokenService tokenService 
+                                     , IStringLocalizer<SharedResources> localizer)
         {
             _UnitOfWork = unitOfWork;
             _mapper = mapper;
             _UserManager = userManager;
             _TokenService = tokenService;
+            _localizer = localizer;
         }
 
 
@@ -59,7 +67,7 @@ namespace Gym.Api.PL.Controllers
                 var map = _mapper.Map<TrainerDataDTO>(result);
                 return Ok(map);
             }
-            return NotFound(new ApiErrorResponse(StatusCodes.Status404NotFound, "Trainer Data with this Id is not found"));
+            return NotFound(new ApiErrorResponse(StatusCodes.Status404NotFound, _localizer["TrainerDataIdNotFound"]));
         }
 
         [AllowAnonymous]
@@ -70,11 +78,11 @@ namespace Gym.Api.PL.Controllers
             {
                 var package = await _UnitOfWork.packageRepository.GetByIdAsync(trainerDataDTO.PackageId);
                 if (package is null)
-                    return NotFound(new ApiErrorResponse(StatusCodes.Status404NotFound, "PackageId With this id is not found"));
+                    return NotFound(new ApiErrorResponse(StatusCodes.Status404NotFound, _localizer["PackageIdNotFound"]));
 
                 var user = await _UserManager.FindByEmailAsync(trainerDataDTO.Email);
                 if (user is not null)
-                    return NotFound(new ApiErrorResponse(StatusCodes.Status404NotFound, "User with this Email is not found"));
+                    return NotFound(new ApiErrorResponse(StatusCodes.Status404NotFound, _localizer["UserIdNotFound"]));
 
 
                 var map = _mapper.Map<TrainerData>(trainerDataDTO);
@@ -112,16 +120,16 @@ namespace Gym.Api.PL.Controllers
                       
                       
                       return BadRequest(new ApiValidationResponse(StatusCodes.Status400BadRequest
-                           , "Error in save TrainerData"));
+                           , _localizer["ErrorInSaving"]));
                 }
 
                 return BadRequest(new ApiValidationResponse(StatusCodes.Status400BadRequest
-                           , "a bad Request , You have made"
+                           , _localizer["BadRequestMessage"]
                            , result.Errors.Select(e => e.Description).ToList()));
                
             }
             return BadRequest(new ApiValidationResponse(400
-            , "a bad Request , You have made"
+            , _localizer["BadRequestMessage"]
             , ModelState.Values
             .SelectMany(v => v.Errors)
             .Select(e => e.ErrorMessage)
@@ -138,7 +146,7 @@ namespace Gym.Api.PL.Controllers
             {
                 var package = _UnitOfWork.packageRepository.GetByIdAsync(trainerDataDTO.PackageId);
                 if (package is null)
-                    return NotFound(new ApiErrorResponse(StatusCodes.Status404NotFound, "Package With this Id is not found"));
+                    return NotFound(new ApiErrorResponse(StatusCodes.Status404NotFound, _localizer["PackageIdNotFound"]));
 
                 var map = _mapper.Map<TrainerData>(trainerDataDTO);
                 var count = await _UnitOfWork.trainerDataRepository.Update(map);
@@ -146,10 +154,10 @@ namespace Gym.Api.PL.Controllers
                 {
                     return Ok(trainerDataDTO);
                 }
-                return BadRequest(new ApiErrorResponse(StatusCodes.Status400BadRequest, "Error in save please try again"));
+                return BadRequest(new ApiErrorResponse(StatusCodes.Status400BadRequest, _localizer["ErrorInSaving"]));
             }
             return BadRequest(new ApiValidationResponse(400
-         , "a bad Request , You have made"
+         , _localizer["BadRequestMessage"]
          , ModelState.Values
          .SelectMany(v => v.Errors)
          .Select(e => e.ErrorMessage)
@@ -162,14 +170,14 @@ namespace Gym.Api.PL.Controllers
         {
             var TrainerData = await _UnitOfWork.trainerDataRepository.GetByIdAsync(Id);
             if (TrainerData is null)
-                return NotFound(new ApiErrorResponse(StatusCodes.Status404NotFound, "TrainerData with this Id is not found"));
+                return NotFound(new ApiErrorResponse(StatusCodes.Status404NotFound, _localizer["TrainerDataIdNotFound"]));
 
             var count = await _UnitOfWork.trainerDataRepository.Delete(TrainerData);
             if (count > 0)
             {
                 return Ok();
             }
-            return BadRequest(new ApiErrorResponse(StatusCodes.Status400BadRequest, "Error in Delete please try again"));
+            return BadRequest(new ApiErrorResponse(StatusCodes.Status400BadRequest, _localizer["ErrorInSaving"]));
             
         }
     }

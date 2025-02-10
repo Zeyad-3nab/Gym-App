@@ -39,8 +39,9 @@ namespace Gym.Api.DAL.Data.Contexts
         public DbSet<TrainerData> TrainersData { get; set; }
         public DbSet<Food> Food { get; set; }
         public DbSet<Exercise> Exercise { get; set; }
-
         public DbSet<ApplicationUserFood> applicationUserFoods { set; get; }
         public DbSet<ApplicationUserExercise> applicationUserExercises { set; get; }
+        public DbSet<ExerciseSystem> exerciseSystems { set; get; }
+        public DbSet<ExerciseSystemItem> exerciseSystemItems { set; get; }
     }
 }

@@ -4,13 +4,13 @@ namespace Gym.Api.PL.DTOs
 {
     public class UserFoodDTO
     {
-        [Required(ErrorMessage = "UserId is required")]
+        [Required(ErrorMessage = "ApplicationUserIdRequired")]
         public string applicationUserId { get; set; }
 
-        [Required(ErrorMessage = "FoodId is required")]
+        [Required(ErrorMessage = "FoodIdRequired")]
         public int foodId { get; set; }
 
-        [Required(ErrorMessage = "Number Of Grams is required")]
+        [Required(ErrorMessage = "NumOfGramsRequired")]
         public int NumOfGrams { get; set; }
 
     }

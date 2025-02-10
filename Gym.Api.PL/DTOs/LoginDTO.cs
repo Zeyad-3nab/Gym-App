@@ -4,14 +4,14 @@ namespace Gym.Api.PL.DTOs
 {
     public class LoginDTO
     {
-        [MaxLength(100)]
-        [DataType(DataType.EmailAddress)]
-        [Required(ErrorMessage = "Email is required")]
+        [MaxLength(100 , ErrorMessage = "MaxLength100")]
+        [DataType(DataType.EmailAddress , ErrorMessage = "EmailAddressDataType")]
+        [Required(ErrorMessage = "EmailRequired")]
         public string Email { get; set; }
 
 
-        [DataType(DataType.Password)]
-        [Required(ErrorMessage = "Password is required")]
+        [DataType(DataType.Password , ErrorMessage = "PasswwordDataType")]
+        [Required(ErrorMessage = "PasswordRequired")]
         public string Password { get; set; }
     }
 }
