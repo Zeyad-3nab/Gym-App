@@ -15,6 +15,7 @@ namespace Gym.Api.DAL.Models
         public string Email { get; set; }
         public double Long { get; set; }
         public double Weight { get; set; }
+        public string? ImageURL { get; set; }
         public string DailyWork { get; set; }
         public string AreYouSomker { get; set; }
         public string AimOfJoin { get; set; }

@@ -9,6 +9,7 @@ namespace Gym.Api.BLL.Interfaces
     public interface IUnitOfWork
     {
         public IPackageRepository  packageRepository { get; }
+        public IExerciseSystemRepository  exerciseSystemRepository { get; }
         public ITrainerDataRepository  trainerDataRepository { get; }
         public IExerciseRepository  exerciseRepository { get; }
         public IFoodRepository  foodRepository { get; }

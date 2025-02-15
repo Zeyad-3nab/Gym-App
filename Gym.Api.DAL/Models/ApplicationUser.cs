@@ -14,6 +14,7 @@ namespace Gym.Api.DAL.Models
         public double Weight { get; set; }
         public double Age { get; set; }
         public string Gender { get; set; }
+        public string? ImageURL { get; set; }
         public DateTime StartPackage { get; set; }
         public DateTime EndPackage { get; set; }
         public int PackageId { get; set; }

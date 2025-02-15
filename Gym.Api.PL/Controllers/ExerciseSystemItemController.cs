@@ -40,6 +40,8 @@ namespace Gym.Api.PL.Controllers
             var exercises = await _unitOfWork.exerciseSystemItemRepository.GetByIdAsync(Id);
             return Ok(exercises);
         }
+
+
         [Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task<ActionResult<int>> Add(ExerciseSystemItemDTO exerciseSystemItemDTO) 

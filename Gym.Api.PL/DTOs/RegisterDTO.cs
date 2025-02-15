@@ -14,6 +14,8 @@ namespace Gym.Api.PL.DTOs
         public string Email { get; set; }
 
         [Required(ErrorMessage = "PasswordRequired")]
+        [RegularExpression(@"^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[\W_]).{8,}$",
+        ErrorMessage = "PasswordShape")]
         public string Password { get; set; }
 
         [Required(ErrorMessage = "AddressRequired")]
@@ -27,6 +29,9 @@ namespace Gym.Api.PL.DTOs
 
         [Required(ErrorMessage = "AgeRequired")]
         public double Age { get; set; }
+
+        public string? ImageURL { get; set; }
+        public IFormFile? Image { get; set; }
 
         private string gender;
 

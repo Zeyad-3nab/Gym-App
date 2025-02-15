@@ -9,6 +9,6 @@ namespace Gym.Api.DAL.Models
     public class ExerciseSystem:BaseModel<int>
     {
         public string Name { get; set; }
-        public IEnumerable<ExerciseSystem> exerciseSystems { get; set; }
+        public List<ExerciseSystemItem> exerciseSystemsItems { get; set; }
     }
 }

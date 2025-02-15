@@ -12,6 +12,8 @@ namespace Gym.Api.PL.DTOs
 
         [Required(ErrorMessage = "AgeRequired")]
         public int Age { get; set; }
+        public string? ImageURL { get; set; }
+        public IFormFile? Image { get; set; }
 
         [Required(ErrorMessage = "AddressRequired")]
         public string Address { get; set; }

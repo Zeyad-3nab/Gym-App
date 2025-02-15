@@ -6,6 +6,7 @@ using Gym.Api.DAL.Models;
 using Gym.Api.DAL.Resources;
 using Gym.Api.PL.DTOs;
 using Gym.Api.PL.Errors;
+using Gym.Api.PL.Helpers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -72,7 +73,7 @@ namespace Gym.Api.PL.Controllers
 
         [AllowAnonymous]
         [HttpPost]
-        public async Task<ActionResult> Add([FromBody] TrainerDataDTO trainerDataDTO)
+        public async Task<ActionResult> Add(TrainerDataDTO trainerDataDTO)
         {
             if (ModelState.IsValid)
             {
@@ -86,6 +87,11 @@ namespace Gym.Api.PL.Controllers
 
 
                 var map = _mapper.Map<TrainerData>(trainerDataDTO);
+                if (trainerDataDTO.Image is not null)
+                {
+                    trainerDataDTO.ImageURL = DocumentSettings.Upload(trainerDataDTO.Image, "UserImages");
+                }
+
                 var appUser = new ApplicationUser() 
                 {
                     UserName = trainerDataDTO.UserName,
@@ -97,6 +103,7 @@ namespace Gym.Api.PL.Controllers
                     StartPackage = trainerDataDTO.StartPackage , 
                     EndPackage = trainerDataDTO.EndPackage ,
                     PackageId = trainerDataDTO.PackageId,
+                    ImageURL=trainerDataDTO.ImageURL
                 };
 
                 var result = await _UserManager.CreateAsync(appUser , trainerDataDTO.Password);    //Create Account

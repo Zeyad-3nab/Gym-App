@@ -7,6 +7,7 @@ using Gym.Api.DAL.Models;
 using Gym.Api.DAL.Resources;
 using Gym.Api.PL.DTOs;
 using Gym.Api.PL.Errors;
+using Gym.Api.PL.Helpers;
 using Gym.Api.PL.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -47,105 +48,51 @@ namespace Gym.Api.PL.Controllers
 
         [Authorize(Roles = "Admin")]
         [HttpGet("GetAllUsers")]
-        public async Task<ActionResult> GetAllUsers()
+        public async Task<ActionResult<IEnumerable<UserReturnDTO>>> GetAllUsers()
         {
-            var users = await _userManager.Users.Select(e => new
-            {
-                e.Id,
-                e.UserName,
-                e.Email,
-                e.Long,
-                e.Weight,
-                e.Age,
-                e.StartPackage,
-                e.EndPackage,
-                e.Package.Name,
-                e.Package.Duration,
-                e.Package.OldPrice,
-                e.Package.NewPrice,
-                e.Gender
-            }).ToListAsync();
-
-            return Ok(users);
+            var users = await _userManager.Users.ToListAsync();
+            var map = _mapper.Map<IEnumerable<UserReturnDTO>>(users);
+            return Ok(map);
         }
 
         [Authorize(Roles = "Admin")]
         [HttpGet("GetNewUsers")]
-        public async Task<ActionResult> GetNewUsers()
+        public async Task<ActionResult<IEnumerable<UserReturnDTO>>> GetNewUsers()
         {
-            var users = await _userManager.Users.Where(u => u.foods.Count() == 0 || u.exercises.Count() == 0).Select(e => new
-            {
-                e.Id,
-                e.UserName,
-                e.Email,
-                e.Long,
-                e.Weight,
-                e.Age,
-                e.StartPackage,
-                e.EndPackage,
-                e.Package.Name,
-                e.Package.Duration,
-                e.Package.OldPrice,
-                e.Package.NewPrice,
-                e.Gender
-            }).ToListAsync();
-
-            return Ok(users);
+            var users = await _userManager.Users.Where(u => u.foods.Count() == 0 || u.exercises.Count() == 0).ToListAsync();
+            var map = _mapper.Map<IEnumerable<UserReturnDTO>>(users);
+            return Ok(map);
         }
 
 
         [Authorize(Roles = "Admin")]
         [HttpGet("GetUsersNearExpirePackage")]
-        public async Task<ActionResult> GetUsersNearExpirePackage()
+        public async Task<ActionResult<IEnumerable<UserReturnDTO>>> GetUsersNearExpirePackage()
         {
             var targetDate = DateTime.UtcNow.Date.AddDays(10);
-            var users = await _userManager.Users.Where(u=>u.EndPackage <= targetDate).Select(e => new
-            {
-                e.Id,
-                e.UserName,
-                e.Email,
-                e.Long,
-                e.Weight,
-                e.Age,
-                e.StartPackage,
-                e.EndPackage,
-                e.Package.Name,
-                e.Package.Duration,
-                e.Package.OldPrice,
-                e.Package.NewPrice,
-                e.Gender
-            }).ToListAsync();
-
-            return Ok(users);
+            var users = await _userManager.Users.Where(u=>u.EndPackage <= targetDate).ToListAsync();
+            var map = _mapper.Map<IEnumerable<UserReturnDTO>>(users);
+            return Ok(map);
         }
 
         [Authorize(Roles ="Admin")]
         [HttpGet("GetUserById")]
-        public async Task<ActionResult> GetUserById(string userId)
+        public async Task<ActionResult<UserReturnDTO>> GetUserById(string userId)
         {
-            if (ModelState.IsValid)
-            {
                 var user = await _userManager.FindByIdAsync(userId);
                 if (user is not null)
                 {
-                    return Ok(user);
+                    var map = _mapper.Map<UserReturnDTO>(user);
+                    return Ok(map);
                 }
 
                 return NotFound(new ApiErrorResponse(StatusCodes.Status404NotFound, _localizer["UserIdNotFound"]));
-            }
-
-            return BadRequest(new ApiValidationResponse(400
-                     , _localizer["BadRequestMessage"]
-                     , ModelState.Values
-                     .SelectMany(v => v.Errors)
-                     .Select(e => e.ErrorMessage)
-                     .ToList()));
         }
 
 
         [AllowAnonymous]
         [HttpPost("Register")]
-        public async Task<ActionResult> Register([FromBody] RegisterDTO registerDTO)
+        public async Task<ActionResult> Register(RegisterDTO registerDTO)
         {
             if (ModelState.IsValid)
             {
@@ -160,6 +107,10 @@ namespace Gym.Api.PL.Controllers
                 var CheckPackage=await _unitOfWork.packageRepository.GetByIdAsync(registerDTO.PackageId);
                 if(CheckPackage is not null) 
                 {
+                    if(registerDTO.Image is not null)
+                    {
+                        registerDTO.ImageURL = DocumentSettings.Upload(registerDTO.Image, "UserImages");
+                    }
                     var appUser = _mapper.Map<ApplicationUser>(registerDTO);
 
                     var result = await _userManager.CreateAsync(appUser, registerDTO.Password);    //Create Account
@@ -197,7 +148,7 @@ namespace Gym.Api.PL.Controllers
 
         [AllowAnonymous]
         [HttpPost("Login")]
-        public async Task<ActionResult> Login(LoginDTO loginDTO)
+        public async Task<ActionResult> Login([FromBody]LoginDTO loginDTO)
         {
             if (ModelState.IsValid)
             {
@@ -235,7 +186,7 @@ namespace Gym.Api.PL.Controllers
 
         [Authorize]
         [HttpPut("UpdateUser")]
-        public async Task<ActionResult> UpdateUser([FromBody]UpdateuserDTO registerDTO)
+        public async Task<ActionResult> UpdateUser(UpdateuserDTO registerDTO)
         {
             if (ModelState.IsValid)
             {
@@ -243,7 +194,7 @@ namespace Gym.Api.PL.Controllers
 
                 if (user is not null)
                 {
-                    var package = _unitOfWork.packageRepository.GetByIdAsync(registerDTO.PackageId);
+                    var package = await _unitOfWork.packageRepository.GetByIdAsync(registerDTO.PackageId);
                     if (package is null)
                         return NotFound(new ApiErrorResponse(StatusCodes.Status404NotFound, _localizer["PackageIdNotFound"]));
 
@@ -256,7 +207,6 @@ namespace Gym.Api.PL.Controllers
                     user.StartPackage=registerDTO.StartPackage;
                     user.EndPackage=registerDTO.EndPackage;
                     user.PackageId=registerDTO.PackageId;
-
 
                     var result = await _userManager.UpdateAsync(user);
                     if (result.Succeeded)

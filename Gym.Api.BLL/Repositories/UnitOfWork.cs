@@ -18,6 +18,7 @@ namespace Gym.Api.BLL.Repositories
         private IUserExerciseRepository _userExerciseRepository;
         private IUserFoodRepository _userFoodRepository;
         private IExerciseSystemItemRepository _exerciseSystemItemRepository;
+        private IExerciseSystemRepository _exerciseSystemRepository;
 
 
         public UnitOfWork(ApplicationDbContext context)
@@ -30,18 +31,24 @@ namespace Gym.Api.BLL.Repositories
             _userExerciseRepository = new UserExerciseRepository(context);
             _userFoodRepository = new UserFoodRepository(context);
             _exerciseSystemItemRepository = new ExerciseSystemItemRepository(context);
+            _exerciseSystemRepository = new ExerciseSystemRepository(context);
         }
 
 
         public IPackageRepository packageRepository => _packageRepository;
 
         public ITrainerDataRepository trainerDataRepository => _trainerDataRepository;
+
         public IFoodRepository foodRepository => _foodRepository;
+
         public IExerciseRepository exerciseRepository => _exerciseRepository;
 
         public IUserExerciseRepository userExerciseRepository => _userExerciseRepository;
 
         public IUserFoodRepository userFoodRepository => _userFoodRepository;
+
         public IExerciseSystemItemRepository exerciseSystemItemRepository => _exerciseSystemItemRepository;
+
+        public IExerciseSystemRepository exerciseSystemRepository => _exerciseSystemRepository;
     }
 }
